@@ -1,0 +1,8 @@
+node_modules
+/.idea/
+/docs/
+/examples/
+/test/
+/assets/
+/prototype/
+/dist/
