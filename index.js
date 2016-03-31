@@ -15,7 +15,7 @@ module.exports = {
   },
   createTransport: (delegate) => {
     return (name, options) => {
-      var Transport = require('./lib/Robot')(delegate);
+      var Transport = require('./lib/Transport')(delegate);
       return new Transport(name, options);
     }
   },

@@ -56,7 +56,7 @@ exports['test Robot'] = {
       }
     });
 
-    var robot = new Robot({
+    var robot = Robot({
       k: 10
     });
 

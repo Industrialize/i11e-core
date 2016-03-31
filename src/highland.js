@@ -2,7 +2,7 @@
  * A highland wrapper
  */
 
-var _ = require('../../highland');
+var _ = require('../highland');
 var createError = require('./utils').createError;
 var G = require('./Global');
 
