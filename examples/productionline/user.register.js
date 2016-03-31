@@ -70,7 +70,7 @@ module.exports = (inputPort, notifyPort, errHandler) => {
       'email&': 'test@test.com',
       'password&': 'pwd'
     })
-    .robot(new GetUserByEmailRobot())
+    .robot(GetUserByEmailRobot())
     .checkpoint({
       'name&': 'name',
       'email&': 'test@test.com',
@@ -88,7 +88,7 @@ module.exports = (inputPort, notifyPort, errHandler) => {
       'email&': 'test@test.com',
       'password&': 'pwd'
     })
-    .robot(new RegisterUserRobot())
+    .robot(RegisterUserRobot())
     .checkpoint({
       'name&': 'name',
       'email&': 'test@test.com',

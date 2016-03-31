@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "industrialize",
   "scripts": {
-    "test": "nodeunit test",
+    "test": "nodeunit test & nodeunit test/examples",
     "build": "babel src -d lib"
   },
   "main": "index.js",
