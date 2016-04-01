@@ -20,6 +20,10 @@ module.exports = (delegate) => {
       this.sync = false;
 
       this.setDelegate(delegate);
+
+      if (this.delegate.initRobot) {
+        this.delegate.initRobot.call(this);
+      }
     }
 
     setDelegate(delegate) {
@@ -29,6 +33,12 @@ module.exports = (delegate) => {
       if (this.delegate.getInputs) this.inputs = this.delegate.getInputs();
       if (this.delegate.getOutputs) this.outputs = this.delegate.getOutputs();
       if (this.delegate.getSync) this.sync = this.delegate.getSync();
+
+      for (let key in this.delegate) {
+        if (typeof this.delegate[key] === 'function') {
+          this[key] = this.delegate[key].bind(this);
+        }
+      }
 
       return this;
     }
@@ -86,16 +96,22 @@ module.exports = (delegate) => {
         const utils = require('./utils');
         utils.printRobot(this.model, box);
         return this.delegate.process.call(this, box, (err, result) => {
-          utils.printBox(result, {prefix: '|=send Box:'});
-          result._debug = false;
-          done(err, result);
+          if (err) {
+            utils.printBox(box, {prefix: '|=send Box:'});
+            box._debug = false;
+            throw err;
+          } else {
+            utils.printBox(result, {prefix: '|=send Box:'});
+            result._debug = false;
+            done(err, result);
+          }
         });
 "#endif";
 "#if process.env.NODE_ENV === 'production'";
         return this.delegate.process.call(this, box, done);
 "#endif"
       } catch (err) {
-        throw createError(500, err, box);
+        done(createError(500, err, box), box);
       }
     }
   }

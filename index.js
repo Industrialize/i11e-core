@@ -7,6 +7,8 @@ module.exports = {
   Constants: require('./lib/Constants'),
   Port: require('./lib/Port'),
 
+  Robots: require('./lib/robots'),
+
   createRobot: (delegate) => {
     return (options) => {
       var Robot = require('./lib/Robot')(delegate);
