@@ -157,7 +157,7 @@ class Box {
     }
 
 "#if process.env.NODE_ENV !== 'production'";
-    if (G.debug && G.glossary && this._debug) {
+    if ((G.debug && G.glossary) || this.getTag(Constants.tags.DEBUG_GLOSSARY)) {
       console.log('  | Path [', keys.join('.'), '] maps to [', newPath.join('.'), ']');
     }
 "#endif";
@@ -278,8 +278,9 @@ class Box {
     return !!tag ? this.addTag(Constants.tags.GLOSSARY, tag) : this.removeTag(Constants.tags.GLOSSARY);
   }
 
-  print(showHidden) {
+  print(showHidden, showTag) {
     if (showHidden) {
+      console.log('--- Content ---');
       console.log(JSON.stringify(this, null, 2));
     }
 
@@ -289,8 +290,13 @@ class Box {
         delete newBox[key];
       }
     }
-
+    console.log('--- Content ---');
     console.log(JSON.stringify(newBox, null, 2));
+
+    if (showTag) {
+      console.log('--- Tags ---');
+      console.log(JSON.stringify(this._tags || {}, null, 2));
+    }
   }
 }
 

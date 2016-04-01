@@ -105,11 +105,9 @@ module.exports = (delegate) => {
         return this.delegate.process.call(this, box, (err, result) => {
           if (err) {
             utils.printBox(box, {prefix: '|=send Box:'});
-            box._debug = false;
             throw err;
           } else {
             utils.printBox(result, {prefix: '|=send Box:'});
-            result._debug = false;
             done(err, result);
           }
         });

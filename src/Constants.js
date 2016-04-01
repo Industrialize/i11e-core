@@ -9,6 +9,11 @@ module.exports = {
   tags: {
     ID: 'id',
     NOTIFY: 'notify',
-    GLOSSARY: 'glossary'
+    GLOSSARY: 'glossary',
+    DEBUG: 'debug',
+    DEBUG_GLOSSARY: 'debug:glossary',
+    DEBUG_TAG: 'debug:tag',
+    DEBUG_UNBOX: 'debug:unbox',
+    DEBUG_RESERVED: 'debug:reserved',
   }
 }

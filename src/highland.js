@@ -90,6 +90,76 @@ _.addMethod('glossary', function(glossary) {
   })
 });
 
+_.addMethod('tag', function(name, tag) {
+  return this.doto((box) => {
+    try {
+      box.addTag(name, tag);
+    } catch (err) {
+      throw createError(500, err, box);
+    }
+  })
+});
+
+_.addMethod('tags', function(tags) {
+  return this.map((box) => {
+    try {
+      for (var key in tags) {
+        if (tags.hasOwnProperty(key)) {
+          if (tags[key] == null) {
+            box.removeTag(key);
+          } else {
+            box.addTag(key, tags[key])
+          }
+        }
+      }
+      return box;
+    } catch (err) {
+      throw createError(500, err, box);
+    }
+  })
+});
+
+"#if process.env.NODE_ENV !== 'production'";
+_.addMethod('debug', function(debug, debug_tag) {
+  return this.tags({
+    'debug': !!debug ? debug : null,
+    'debug:unbox': !!debug ? debug : null,
+    'debug:tag': !!debug_tag ? debug_tag : null
+  });
+});
+"#endif"
+
+"#if process.env.NODE_ENV === 'production'";
+_.addMethod('debug', function(debug) {
+  return this.doto(() => {});
+});
+"#endif"
+
+_.addMethod('accept', function(properties) {
+  return this.filter(function(box) {
+    for (var key in properties) {
+      if (properties.hasOwnProperty(key)) {
+        if (!box.get(key) || box.get(key) != properties[key]) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  })
+});
+
+_.addMethod('set', function(items) {
+  return this.map(function(box) {
+    for (var key in items) {
+      if (items.hasOwnProperty(key)) {
+        box.set(key, items[key]);
+      }
+    }
+    return box;
+  });
+});
+
 _.addMethod('return', function(inputPort) {
   return this.through(inputPort.response());
 });
@@ -131,31 +201,6 @@ _.addMethod('validate', function(properties) {
     // properties must be either Array or object
     throw createError(400, 'Invalid Request', box);
   })
-});
-
-_.addMethod('accept', function(properties) {
-  return this.filter(function(box) {
-    for (var key in properties) {
-      if (properties.hasOwnProperty(key)) {
-        if (!box.get(key) || box.get(key) != properties[key]) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  })
-});
-
-_.addMethod('set', function(items) {
-  return this.map(function(box) {
-    for (var key in items) {
-      if (items.hasOwnProperty(key)) {
-        box.set(key, items[key]);
-      }
-    }
-    return box;
-  });
 });
 
 _.addMethod('drive', function() {

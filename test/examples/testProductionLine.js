@@ -1,10 +1,3 @@
-const debug = require('../../index').debug;
-
-debug.glossary = false;
-debug.debug = true;
-debug.trace = "*";
-debug.unbox = true;
-
 exports['test example'] = {
   'test [user.register]': (test) => {
     const userRegisterPL = require('../../examples/productionline/user.register');

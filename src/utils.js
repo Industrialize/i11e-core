@@ -1,3 +1,5 @@
+const Constants = require('./Constants');
+
 module.exports = {
   /**
    * Create an error with status code and source
@@ -34,12 +36,12 @@ module.exports = {
     if (!options.glossary) options.glossary = G.glossary;
     if (!options.printBox) options.unbox = G.unbox;
     if (!options.showHidden) options.showHidden = G.showHidden;
+    if (!options.showTag) options.showTag = G.showTag;
 
-    if (G.debug) {
-      box._debug = G.debug;
-      if (options.unbox) {
+    if (G.debug || box.getTag(Constants.tags.DEBUG)) {
+      if (options.unbox || box.getTag(Constants.tags.DEBUG_UNBOX)) {
         console.log(options.prefix || '  | Box:');
-        box.print(options.showHidden);
+        box.print(options.showHidden, options.showTag || box.getTag(Constants.tags.DEBUG_TAG));
       }
     }
   },
@@ -61,14 +63,14 @@ module.exports = {
     if (!options.glossary) options.glossary = G.glossary;
     if (!options.printBox) options.unbox = G.unbox;
     if (!options.showHidden) options.showHidden = G.showHidden;
+    if (!options.showTag) options.showTag = G.showTag;
 
-    if (G.debug && model && G.trace && matchName(model, G.trace)) {
+    if ((G.debug && model && G.trace && matchName(model, G.trace)) || box.getTag(Constants.tags.DEBUG)) {
       console.log(`|---> Robot: [${model}]`);
-      box._debug = G.debug;
 
-      if (options.unbox) {
+      if (options.unbox || box.getTag(Constants.tags.DEBUG_UNBOX)) {
         console.log('|=receive Box:');
-        box.print(options.showHidden);
+        box.print(options.showHidden, options.showTag || box.getTag(Constants.tags.DEBUG_TAG));
       }
     }
   }
