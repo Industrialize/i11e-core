@@ -1,7 +1,7 @@
 const debug = require('../../index').debug;
 
 debug.glossary = false;
-debug.debug = false;
+debug.debug = true;
 debug.trace = "*";
 debug.unbox = true;
 

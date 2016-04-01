@@ -10,23 +10,27 @@ module.exports = {
 
   Robots: require('./lib/robots'),
 
+  // created robot will be a function
   createRobot: (delegate) => {
     return (options) => {
       var Robot = require('./lib/Robot')(delegate);
       return new Robot(options);
     }
   },
+  // created transport will be a function
   createTransport: (delegate) => {
     return (name, options) => {
       var Transport = require('./lib/Transport')(delegate);
       return new Transport(name, options);
     }
   },
+  // created factory will be a function
   createFactory: (delegate) => {
     return (name, options) => {
       var Factory = require('./lib/Factory')(delegate);
       return new Factory(name, options);
     }
   },
+  
   createError: require('./lib/utils').createError
 }

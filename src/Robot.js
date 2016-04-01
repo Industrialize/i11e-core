@@ -6,6 +6,8 @@ var defaultWorker = {
   }
 };
 
+const ReserverdFunctions = ['setDelegate', 'process'];
+
 module.exports = (delegate) => {
   if (!delegate) {
     delegate = defaultWorker;
@@ -35,6 +37,11 @@ module.exports = (delegate) => {
       if (this.delegate.getSync) this.sync = this.delegate.getSync();
 
       for (let key in this.delegate) {
+        // skip predefined functions
+        if (ReserverdFunctions.indexOf(key) >= 0) {
+          continue;
+        }
+
         if (typeof this.delegate[key] === 'function') {
           this[key] = this.delegate[key].bind(this);
         }
