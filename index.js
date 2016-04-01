@@ -1,5 +1,6 @@
 module.exports = {
   highland: require('./lib/highland'),
+  prodline: require('./lib/highland'),
 
   debug: require('./lib/Global'),
 
