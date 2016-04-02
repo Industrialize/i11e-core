@@ -1,6 +1,6 @@
 module.exports = {
-  highland: require('./lib/highland'),
-  prodline: require('./lib/highland'),
+  highland: require('./lib/prodline'),
+  prodline: require('./lib/prodline'),
 
   debug: require('./lib/Global'),
 
@@ -31,6 +31,6 @@ module.exports = {
       return new Factory(name, options);
     }
   },
-  
+
   createError: require('./lib/utils').createError
 }

@@ -1,4 +1,5 @@
 const Constants = require('./Constants');
+const createRobotModel = require('./Robot');
 
 module.exports = {
   /**
@@ -24,6 +25,64 @@ module.exports = {
 
     return error;
   },
+
+  /**
+   * Wrap a node callback stype function to a robot
+   * @param  {String} model  the model name of the Robot
+   * @param  {Array} inputs   the inputs of the fn
+   * @param  {Array} outputs   the outputs of the fn
+   * @param  {Function} fn callback style api
+   * @return {Function}      init function to instantiate robot
+   */
+  wrapCallback(model, inputs, ouputs, fn) {
+    return createRobotModel({
+      initRobot() {
+      },
+
+      getInputs() {
+        return inputs;
+      },
+
+      getOutputs() {
+        return outputs;
+      },
+
+      getModel() {
+        return model;
+      },
+
+      process(box, done) {
+        var args = [];
+        for (var i = 0; i < this.inputs.length; i++) {
+          args.push(box.get(this.inputs[i]));
+        }
+
+        args.push((err) => {
+          if (err) {
+            return done(err);
+          }
+
+          // process the results, skip the 'err' argument
+          for (var i = 1; i < arguments.length; i++) {
+            if (this.outputs.length >= i) {
+              box.set(this.outputs[i - 1], arguments[i]);
+            } else {
+              console.warn('wrapCallback: Not enough output name defined!');
+              box.set('output_' + (i - 1), arguments[i])
+            }
+          }
+
+          return done(null, box);
+        });
+
+        fn.apply(this, args);
+      }
+    })
+  },
+
+  // ---------------------------------------------------------------------------
+  // debug util
+  // ---------------------------------------------------------------------------
 
   printProductionLine(name) {
     const G = require('./Global');

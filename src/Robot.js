@@ -1,14 +1,13 @@
-const createError = require('./utils').createError;
-
 var defaultWorker = {
   process(box, done) {
     done(null, box);
   }
 };
 
-const ReserverdFunctions = ['setDelegate', 'process'];
-
 module.exports = (delegate) => {
+  const ReserverdFunctions = ['setDelegate', 'process'];
+  let createError = require('./utils').createError;
+
   if (!delegate) {
     delegate = defaultWorker;
   }
@@ -67,7 +66,7 @@ module.exports = (delegate) => {
 "#endif";
 "#if process.env.NODE_ENV === 'production'";
         return this.delegate.process.call(this, box, done);
-"#endif"
+"#endif";
       } catch (err) {
         done(createError(500, err, box), box);
       }

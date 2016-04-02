@@ -4,6 +4,10 @@
 
 var _ = require('../highland');
 var createError = require('./utils').createError;
+var BoxValidationRobot = require('./robots').BoxValidationRobot;
+var TagRobot = require('./robots').TagRobot;
+var Constants = require('./Constants');
+
 var G = require('./Global');
 
 const DEFAULT_PARALLEL = 5;
@@ -11,49 +15,6 @@ const DEFAULT_PARALLEL = 5;
 /**
  * unified method to deploy a worker on a production line
  */
-_.addMethod('worker', function(f, async) {
-  if (!async) {
-    return this.syncWorker(f);
-  } else {
-    var parallel = (!isNaN(async) && async > 1) ? async : DEFAULT_PARALLEL;
-    return this.asyncWorker(f, parallel);
-  }
-
-});
-
-_.addMethod('syncWorker', function(f) {
-  var fn = function(box) {
-    try {
-      return f(box)
-    } catch (err) {
-      throw createError(500, err, box);
-    }
-  }
-  return this.map(fn);
-});
-
-_.addMethod('asyncWorker', function(f, parallel) {
-  var self = this;
-
-  var fn = function(box, done) {
-    try {
-      return f(box, done)
-    } catch (err) {
-      throw createError(500, err, box);
-    }
-  }
-
-  if (!parallel) parallel = 1;
-  return this.through(
-    _.pipeline(
-      _.map(
-        _.wrapCallback(fn)
-      ),
-      _.parallel(parallel)
-    )
-  )
-});
-
 _.addMethod('robot', function(robot, parallel) {
   if (robot.sync) {
     var fn = (box) => {
@@ -78,47 +39,30 @@ _.addMethod('robot', function(robot, parallel) {
   }
 });
 
-_.addMethod('glossary', function(glossary) {
-  return this.map(function(box) {
-    try {
-      return box.setGlossaryTag(glossary);
-    } catch (err) {
-      if (!err.code) err.code = 500;
-      err.source = err.data = box;
-      throw err;
-    }
-  })
-});
-
-_.addMethod('tag', function(name, tag) {
-  return this.doto((box) => {
-    try {
-      box.addTag(name, tag);
-    } catch (err) {
-      throw createError(500, err, box);
-    }
-  })
+// -----------------------------------------------------------------------------
+// Syntax sugar for commonly used robots
+// -----------------------------------------------------------------------------
+_.addMethod('validate', function(template) {
+  return this.robot(BoxValidationRobot(template));
 });
 
 _.addMethod('tags', function(tags) {
-  return this.map((box) => {
-    try {
-      for (var key in tags) {
-        if (tags.hasOwnProperty(key)) {
-          if (tags[key] == null) {
-            box.removeTag(key);
-          } else {
-            box.addTag(key, tags[key])
-          }
-        }
-      }
-      return box;
-    } catch (err) {
-      throw createError(500, err, box);
-    }
-  })
+  return this.robot(TagRobot(tags));
 });
 
+_.addMethod('glossary', function(glossary) {
+  var tags = {};
+  tags[Constants.tags.GLOSSARY] = glossary;
+  return this.robot(TagRobot(tags));
+});
+
+_.addMethod('set', function(items) {
+  return this.robot(SetContentRobot(items));
+});
+
+// -----------------------------------------------------------------------------
+// Useful tool in prodline, which is not implemented as a robot
+// -----------------------------------------------------------------------------
 "#if process.env.NODE_ENV !== 'production'";
 _.addMethod('debug', function(debug, debug_tag) {
   return this.tags({
@@ -149,16 +93,7 @@ _.addMethod('accept', function(properties) {
   })
 });
 
-_.addMethod('set', function(items) {
-  return this.map(function(box) {
-    for (var key in items) {
-      if (items.hasOwnProperty(key)) {
-        box.set(key, items[key]);
-      }
-    }
-    return box;
-  });
-});
+
 
 _.addMethod('return', function(inputPort) {
   return this.through(inputPort.response());
@@ -172,36 +107,6 @@ _.addMethod('notify', function(outputPort) {
   return this.through(outputPort.out(true));
 });
 
-_.addMethod('validate', function(properties) {
-  return this.map(function(box) {
-    if (Array.isArray(properties)) {
-      for (var i = 0; i < properties.length; i++) {
-        if (!box.get([properties[i]])) {
-          throw createError(400, 'Invalid Request', box);
-        }
-      }
-
-      return box;
-    }
-
-    if (typeof properties == 'object') {
-      for (var key in properties) {
-        if (properties.hasOwnProperty(key)) {
-          var type = properties[key];
-          var value = box.get(key);
-          if (!value || typeof value != type) {
-            throw createError(400, 'Invalid Request', box);
-          }
-        }
-      }
-
-      return box;
-    }
-
-    // properties must be either Array or object
-    throw createError(400, 'Invalid Request', box);
-  })
-});
 
 _.addMethod('drive', function() {
   return this.each((box) => {});
