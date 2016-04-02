@@ -1,4 +1,7 @@
 const Port = require('./Port');
+
+const ReserverdFunctions = ['setDelegate', 'getName', 'getType', 'getPort', 'startup', 'shutdown'];
+
 module.exports = (delegate) => {
   class Factory {
     constructor(name, options = {}) {
@@ -27,6 +30,17 @@ module.exports = (delegate) => {
       }
 
       if (this.delegate.getType) this.type = this.delegate.getType();
+
+      for (let key in this.delegate) {
+        // skip predefined functions
+        if (ReserverdFunctions.indexOf(key) >= 0) {
+          continue;
+        }
+
+        if (typeof this.delegate[key] === 'function') {
+          this[key] = this.delegate[key].bind(this);
+        }
+      }
 
       return this;
     }

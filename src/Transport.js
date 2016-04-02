@@ -1,5 +1,7 @@
 const Constants = require('./Constants');
 
+const ReserverdFunctions = ['setDelegate', 'connect', 'disconnect', 'listenOutgoing', 'incomingListener'];
+
 // local transport by default
 var defaultTransport = {
   connect(port) {},
@@ -47,6 +49,17 @@ module.exports = (delegate) => {
      */
     setDelegate(delegate) {
       this.delegate = delegate;
+
+      for (let key in this.delegate) {
+        // skip predefined functions
+        if (ReserverdFunctions.indexOf(key) >= 0) {
+          continue;
+        }
+
+        if (typeof this.delegate[key] === 'function') {
+          this[key] = this.delegate[key].bind(this);
+        }
+      }
 
       return this;
     }
