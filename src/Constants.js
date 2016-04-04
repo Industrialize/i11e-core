@@ -8,6 +8,7 @@ module.exports = {
 
   tags: {
     ID: 'id',
+    TRANSPORT_FIELDS: 'transport:fields',  // which fields to transport
     NOTIFY: 'notify',
     GLOSSARY: 'glossary',
     DEBUG: 'debug',

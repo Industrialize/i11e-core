@@ -32,9 +32,13 @@ module.exports = createRobotModel({
     this.template = this.options;
   },
 
+  getModel() {
+    return 'BoxValidationRobot';
+  },
+
   process(box, done) {
     if (typeof this.template === 'function') {
-      return handleFunction(box, done);
+      return this.handleFunction(box, done);
     }
 
     try {

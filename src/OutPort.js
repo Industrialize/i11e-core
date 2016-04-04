@@ -61,6 +61,16 @@ class OutPort {
     var resBox = new Box(message);
     resBox.set('_results', null); // remove the results
 
+    // prepare the field to transport
+    var transportBox = resBox;
+    var transportFields = resBox.getTag(Constants.tags.TRANSPORT_FIELDS);
+    if (transportFields) {
+      transportBox = {};
+      for (let field of transportFields) {
+        transportBox[field] = resBox.get(field);
+      }
+    }
+
     var results = [];
     _((push, next) => {
       for (let key in this.transports) {
@@ -74,7 +84,7 @@ class OutPort {
           return transport.incomingListener(box, cb);
         };
       })
-      .nfcall([new Box(resBox)])
+      .nfcall([new Box(transportBox)])
       .parallel((this.transports.length > 0) ? this.transports.length : 1)
       .errors((err) => {
         done(err);

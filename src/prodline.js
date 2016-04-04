@@ -52,25 +52,24 @@ _.addMethod('validate', function(template) {
   return this.robot(BoxValidationRobot(template));
 });
 
+"#if process.env.NODE_ENV !== 'production'";
+_.addMethod('checkpoint', function(template) {
+  return this.robot(BoxValidationRobot(template));
+});
+"#endif";
+
+"#if process.env.NODE_ENV === 'production'";
+_.addMethod('checkpoint', function(template) {
+  return this.doto(() => {});
+});
+"#endif";
+
 _.addMethod('tag', function(tags) {
-  // return this.robot(TagRobot(tags));
-  return this.tags(tags);
+  return this.robot(TagRobot(tags));
 });
 
 _.addMethod('tags', function(tags) { // same as tag
-  //return this.robot(TagRobot(tags));
-  return this.map((box) =>{
-    for (var key in tags) {
-      if (tags.hasOwnProperty(key)) {
-        if (tags[key] == null) {
-          box.removeTag(key);
-        } else {
-          box.addTag(key, tags[key])
-        }
-      }
-    }
-    return box;
-  });
+  return this.robot(TagRobot(tags));
 });
 
 _.addMethod('glossary', function(glossary) {
@@ -92,11 +91,25 @@ _.addMethod('gp', function(fn, parallel) { // general purpose
 // -----------------------------------------------------------------------------
 "#if process.env.NODE_ENV !== 'production'";
 _.addMethod('debug', function(debug, debug_tag, unboxFilter) {
-  return this.tags({
+  var tags = {
     'debug': !!debug ? !!debug : null,
     'debug:unbox': !!debug ? !!debug : null,
     'debug:tag': !!debug_tag ? !!debug_tag : null,
     'debug:unbox:filter': !!unboxFilter ? unboxFilter : null
+  };
+
+  // do not use tag robot here, otherwise it will print the tag robot info
+  return this.map((box) =>{
+    for (var key in tags) {
+      if (tags.hasOwnProperty(key)) {
+        if (tags[key] == null) {
+          box.removeTag(key);
+        } else {
+          box.addTag(key, tags[key])
+        }
+      }
+    }
+    return box;
   });
 });
 "#endif"
@@ -137,7 +150,7 @@ _.addMethod('drive', function() {
 });
 
 "#if process.env.NODE_ENV !== 'production'";
-_.addMethod('checkpoint', function(template) {
+_.addMethod('checkpoint__bak', function(template) {
   if (typeof template === 'function') {
     var fn = template;
 
@@ -250,12 +263,6 @@ _.addMethod('checkpoint', function(template) {
       throw createError(400, error, box);
     }
   });
-});
-"#endif";
-
-"#if process.env.NODE_ENV === 'production'";
-_.addMethod('checkpoint', function(template) {
-  return this.doto(() => {});
 });
 "#endif";
 

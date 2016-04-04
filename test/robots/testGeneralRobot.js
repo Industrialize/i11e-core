@@ -10,8 +10,7 @@ exports['test GeneralRobot'] = {
         name: 'John'
       })
     ])
-    .doto(()=>{})
-    //.debug(true, false, 'greetings')
+    //.debug(true)
     .robot(GeneralRobot((box, done) => {
       var name = box.get('name');
 
@@ -19,6 +18,12 @@ exports['test GeneralRobot'] = {
 
       done(null, box);
     }))
+    // .gp((box, done) => {
+    //    var name = box.get('name');
+    //    box.set('greetings', `Hello! ${name}`);
+    //    done(null, box);
+    // })
+    // .debug(false)
     .checkpoint({
       name: 'John',
       greetings: 'Hello! John'
