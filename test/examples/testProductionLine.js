@@ -3,7 +3,7 @@ exports['test example'] = {
     const userRegisterPL = require('../../examples/productionline/user.register');
     const Box = require('../../index').Box;
     const PassThrough = require('stream').PassThrough;
-    const _ = require('../../index').highland;
+    const _ = require('../../index').prodline;
     const Port = require('../../index').Port;
     const Constants = require('../../index').Constants;
 
