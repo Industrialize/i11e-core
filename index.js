@@ -31,6 +31,13 @@ module.exports = {
       return new Factory(name, options);
     }
   },
+  // created pipeline will be a function
+  createPipeline: (delegate) => {
+    return (options) => {
+      var Pipeline = require('./lib/Pipeline')(delegate);
+      return new Pipeline(options);
+    }
+  },
 
   createError: require('./lib/utils').createError
 }

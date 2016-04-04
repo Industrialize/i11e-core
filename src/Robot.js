@@ -16,8 +16,6 @@ module.exports = (delegate) => {
     constructor(options = {}) {
       this.model = "Unknown Model";
       this.options = options;
-      this.inputs = [];
-      this.outputs = [];
       this.sync = false;
 
       this.setDelegate(delegate);

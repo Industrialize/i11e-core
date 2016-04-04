@@ -41,7 +41,7 @@ _.addMethod('robot', function(robot, parallel) {
   }
 });
 
-_.addMethod('prodline', (pipeline) => {
+_.addMethod('prodline', function(pipeline) {
   return this.through(pipeline.process());
 });
 

@@ -9,19 +9,23 @@ var defaultPipeline = {
 }
 
 module.exports = (delegate) => {
-  const ReserverdFunctions = ['setDelegate', 'process'];
+  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'process'];
   var _ = require('./prodline');
 
   if (!delegate) {
     delegate = defaultProdline;
   }
 
-  class ProductionLine {
+  class Pipeline {
     constructor(options = {}) {
       this.type = "Unknown Production Line";
       this.options = options;
 
       this.setDelegate(delegate);
+
+      if (this.delegate.initPipeline) {
+        this.delegate.initPipeline.call(this);
+      }
     }
 
     setDelegate(delegate) {
@@ -43,9 +47,9 @@ module.exports = (delegate) => {
 
     process() {
       var robots = this.delegate.getRobots();
-      robots.push(_.parallel(this.options.parallel || 3));
-
       return _.pipeline.apply(_, robots);
     }
   }
+
+  return Pipeline;
 }
