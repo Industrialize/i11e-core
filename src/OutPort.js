@@ -1,4 +1,4 @@
-const _ = require('./highland');
+const _ = require('./prodline');
 const Box = require('./Box');
 const Constants = require('./Constants');
 const createError = require('./utils').createError;

@@ -31,9 +31,7 @@ module.exports = (delegate) => {
       this.delegate = delegate;
 
       if (this.delegate.getModel) this.model = this.delegate.getModel();
-      if (this.delegate.getInputs) this.inputs = this.delegate.getInputs();
-      if (this.delegate.getOutputs) this.outputs = this.delegate.getOutputs();
-      if (this.delegate.getSync) this.sync = this.delegate.getSync();
+      if (this.delegate.isSync) this.sync = this.delegate.isSync();
 
       for (let key in this.delegate) {
         // skip predefined functions
@@ -68,7 +66,10 @@ module.exports = (delegate) => {
         return this.delegate.process.call(this, box, done);
 "#endif";
       } catch (err) {
-        done(createError(500, err, box), box);
+        if (done)
+          done(createError(500, err, box), box);
+        else
+          throw createError(500, err, box);
       }
     }
   }

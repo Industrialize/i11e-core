@@ -279,24 +279,32 @@ class Box {
   }
 
   print(showHidden, showTag) {
-    if (showHidden) {
-      console.log('--- Content ---');
-      console.log(JSON.stringify(this, null, 2));
-    }
-
     var newBox = new Box(this);
+    let filter = this.getTag(Constants.tags.DEBUG_UNBOX_FILER);
+    if (filter) filter = filter.split(';');
     for (var key in newBox) {
-      if (key.indexOf('_') == 0) {
-        delete newBox[key];
+      if (!showHidden) {
+        if (key.indexOf('_') == 0) {
+          delete newBox[key];
+        }
+      }
+
+      if (filter) {
+        if (filter.indexOf(key) < 0) {
+          delete newBox[key];
+        }
       }
     }
     console.log('--- Content ---');
+    if (filter) console.log('(filter:', filter)
     console.log(JSON.stringify(newBox, null, 2));
 
     if (showTag) {
       console.log('--- Tags ---');
       console.log(JSON.stringify(this._tags || {}, null, 2));
     }
+
+    return this;
   }
 }
 

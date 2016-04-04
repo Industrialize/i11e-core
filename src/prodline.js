@@ -6,6 +6,8 @@ var _ = require('../highland');
 var createError = require('./utils').createError;
 var BoxValidationRobot = require('./robots').BoxValidationRobot;
 var TagRobot = require('./robots').TagRobot;
+var GeneralRobot = require('./robots').GeneralRobot;
+var SetContentRobot = require('./robots').SetContentRobot;
 var Constants = require('./Constants');
 
 var G = require('./Global');
@@ -39,6 +41,10 @@ _.addMethod('robot', function(robot, parallel) {
   }
 });
 
+_.addMethod('prodline', (pipeline) => {
+  return this.through(pipeline.process());
+});
+
 // -----------------------------------------------------------------------------
 // Syntax sugar for commonly used robots
 // -----------------------------------------------------------------------------
@@ -46,8 +52,25 @@ _.addMethod('validate', function(template) {
   return this.robot(BoxValidationRobot(template));
 });
 
-_.addMethod('tags', function(tags) {
-  return this.robot(TagRobot(tags));
+_.addMethod('tag', function(tags) {
+  // return this.robot(TagRobot(tags));
+  return this.tags(tags);
+});
+
+_.addMethod('tags', function(tags) { // same as tag
+  //return this.robot(TagRobot(tags));
+  return this.map((box) =>{
+    for (var key in tags) {
+      if (tags.hasOwnProperty(key)) {
+        if (tags[key] == null) {
+          box.removeTag(key);
+        } else {
+          box.addTag(key, tags[key])
+        }
+      }
+    }
+    return box;
+  });
 });
 
 _.addMethod('glossary', function(glossary) {
@@ -60,15 +83,20 @@ _.addMethod('set', function(items) {
   return this.robot(SetContentRobot(items));
 });
 
+_.addMethod('gp', function(fn, parallel) { // general purpose
+  return this.robot(GeneralRobot(fn), parallel);
+});
+
 // -----------------------------------------------------------------------------
 // Useful tool in prodline, which is not implemented as a robot
 // -----------------------------------------------------------------------------
 "#if process.env.NODE_ENV !== 'production'";
-_.addMethod('debug', function(debug, debug_tag) {
+_.addMethod('debug', function(debug, debug_tag, unboxFilter) {
   return this.tags({
-    'debug': !!debug ? debug : null,
-    'debug:unbox': !!debug ? debug : null,
-    'debug:tag': !!debug_tag ? debug_tag : null
+    'debug': !!debug ? !!debug : null,
+    'debug:unbox': !!debug ? !!debug : null,
+    'debug:tag': !!debug_tag ? !!debug_tag : null,
+    'debug:unbox:filter': !!unboxFilter ? unboxFilter : null
   });
 });
 "#endif"
@@ -88,12 +116,9 @@ _.addMethod('accept', function(properties) {
         }
       }
     }
-
     return true;
   })
 });
-
-
 
 _.addMethod('return', function(inputPort) {
   return this.through(inputPort.response());
@@ -106,7 +131,6 @@ _.addMethod('request', function(outputPort) {
 _.addMethod('notify', function(outputPort) {
   return this.through(outputPort.out(true));
 });
-
 
 _.addMethod('drive', function() {
   return this.each((box) => {});
@@ -234,4 +258,5 @@ _.addMethod('checkpoint', function(template) {
   return this.doto(() => {});
 });
 "#endif";
+
 module.exports = _;

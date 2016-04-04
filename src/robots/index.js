@@ -12,5 +12,10 @@ module.exports = {
   SetContentRobot: (items) => {
     var SetContentRobotModel = require('./SetContentRobot');
     return new SetContentRobotModel(items);
+  },
+
+  GeneralRobot: (fn) => {
+    var GeneralRobotModel = require('./GeneralRobot');
+    return new GeneralRobotModel(fn);
   }
 }

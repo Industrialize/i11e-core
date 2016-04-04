@@ -37,9 +37,9 @@ exports['test transport'] = {
       .accept({
         cmd: 'greeting'
       })
-      .syncWorker((box) => {
+      .gp((box, done) => {
         box.set('greeting', 'hello!');
-        return box;
+        done(null, box);
       })
       .return(input)
       .drive();

@@ -1,4 +1,4 @@
-const _ = require('./highland');
+const _ = require('./prodline');
 const Box = require('./Box');
 const Constants = require('./Constants');
 const NodeCache = require('node-cache');
@@ -115,7 +115,7 @@ class InPort {
   process(pattern, processor, parallel = 3) {
     this.in().fork()
       .accept(pattern)
-      .asyncWorker(processor, parallel)
+      .gp(processor, parallel) // => .robot(GeneralRobot(processor), parallel)
       .errors((err, rethrow) => {
         console.error(err.message);
       })
