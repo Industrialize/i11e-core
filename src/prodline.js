@@ -41,9 +41,9 @@ _.addMethod('robot', function(robot, parallel) {
   }
 });
 
-_.addMethod('prodline', function(pipeline) {
-  return this.through(pipeline.process());
-});
+// _.addMethod('prodline', function(pipeline) {
+//   return this.through(pipeline.process());
+// });
 
 // -----------------------------------------------------------------------------
 // Syntax sugar for commonly used robots

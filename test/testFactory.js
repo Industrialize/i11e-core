@@ -1,10 +1,3 @@
-const debug = require('../index').debug;
-
-debug.glossary = false;
-debug.debug = true;
-debug.trace = "*";
-debug.unbox = true;
-
 exports['testFactory'] = {
   'test factory': (test) => {
     var createFactory = require('../index').createFactory;

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "industrialize",
   "scripts": {
+    "clean": "rm -R lib",
     "test": "nodeunit test & nodeunit test/examples & nodeunit test/robots",
     "build": "babel src -d lib"
   },

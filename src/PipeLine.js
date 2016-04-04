@@ -9,7 +9,7 @@ var defaultPipeline = {
 }
 
 module.exports = (delegate) => {
-  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'process'];
+  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'run'];
   var _ = require('./prodline');
 
   if (!delegate) {
@@ -31,6 +31,8 @@ module.exports = (delegate) => {
     setDelegate(delegate) {
       this.delegate = delegate;
 
+      if (this.delegate.getType) this.type = this.delegate.getType();
+
       for (let key in this.delegate) {
         // skip predefined functions
         if (ReserverdFunctions.indexOf(key) >= 0) {
@@ -45,9 +47,8 @@ module.exports = (delegate) => {
       return this;
     }
 
-    process() {
-      var robots = this.delegate.getRobots();
-      return _.pipeline.apply(_, robots);
+    pipeline(source) {
+      return this.delegate.pipeline.call(this, source);
     }
   }
 

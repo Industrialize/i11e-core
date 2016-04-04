@@ -75,7 +75,10 @@ class InPort {
   // -------------------------------------------------------------------------------------
   // Method for IN mode
   // -------------------------------------------------------------------------------------
-  in () {
+  in (filter) {
+    if (filter) {
+      return _(this.incomingStream).fork().accept(filter);
+    }
     return _(this.incomingStream);
   }
 
