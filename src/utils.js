@@ -23,6 +23,10 @@ module.exports = {
       return `[${error.statusCode}]:${error.message}`;
     };
 
+    error.toResult = function() {
+      return error.source.new(error);
+    }
+
     return error;
   },
 

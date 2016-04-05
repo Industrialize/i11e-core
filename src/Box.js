@@ -71,21 +71,21 @@ class Box {
     return typeof object === 'object' && object !== null && object.__type__ == 'box';
   }
 
+  // ---------------------------------------------------------------------------
+  // Instance Methods
+  // ---------------------------------------------------------------------------
+
   /**
    * Create a new Box with the same sequence
    * @param  {Object} content new box's content
    * @param  {Object} tags    box tags
    * @return {Object}         Box instance
    */
-  static new(content, tags) {
+  new(content, tags) {
     var newBox = new Box(content, tags);
     newBox._seq = this._seq;
     return newBox;
   }
-
-  // ---------------------------------------------------------------------------
-  // Instance Methods
-  // ---------------------------------------------------------------------------
 
   /**
    * Get the raw payload

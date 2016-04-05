@@ -94,7 +94,11 @@ class InPort {
             console.warn('Could not find response stream for box: ', box._seq);
           } else if (typeof res == 'function') {
             // callback
-            res(null, box);
+            if (box._error) {
+              res(box._error, box);
+            } else {
+              res(null, box);
+            }
           } else {
             // stream
             if (box._stream) {
