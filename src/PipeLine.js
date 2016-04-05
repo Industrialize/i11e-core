@@ -47,8 +47,8 @@ module.exports = (delegate) => {
       return this;
     }
 
-    pipeline(source, errHandler) {
-      return this.delegate.pipeline.call(this, source, errHandler);
+    pipeline(source, target, errHandler) {
+      return this.delegate.pipeline.call(this, source, target, errHandler);
     }
   }
 

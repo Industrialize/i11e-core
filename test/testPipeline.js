@@ -6,7 +6,7 @@ exports['test pipeline'] = {
     const Box = require('../index').Box;
 
     var GreetingPipeline = createPipeline({
-      pipeline(source) {
+      pipeline(source, target, errHandler) {
         return source.in({
             $cmd: 'example.greeting'
           })
