@@ -9,6 +9,8 @@ var TagRobot = require('./robots').TagRobot;
 var GeneralRobot = require('./robots').GeneralRobot;
 var SetContentRobot = require('./robots').SetContentRobot;
 var Constants = require('./Constants');
+var Port = require('./Port');
+var createTransport = require('./Transport');
 
 var G = require('./Global');
 
@@ -89,6 +91,11 @@ _.addMethod('gp', function(fn, parallel) { // general purpose
 // -----------------------------------------------------------------------------
 // Useful tool in prodline, which is not implemented as a robot
 // -----------------------------------------------------------------------------
+
+_.addMethod('join', function(pipeline) {
+
+});
+
 "#if process.env.NODE_ENV !== 'production'";
 _.addMethod('debug', function(debug, debug_tag, unboxFilter) {
   var tags = {

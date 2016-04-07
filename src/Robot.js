@@ -7,6 +7,7 @@ var defaultWorker = {
 module.exports = (delegate) => {
   const ReserverdFunctions = ['setDelegate', 'process'];
   let createError = require('./utils').createError;
+  let Constants = require('./Constants');
 
   if (!delegate) {
     delegate = defaultWorker;
@@ -50,14 +51,18 @@ module.exports = (delegate) => {
 "#if process.env.NODE_ENV !== 'production'";
         const utils = require('./utils');
         utils.printRobot(this.model, box);
+        var start = process.hrtime();
         return this.delegate.process.call(this, box, (err, result) => {
+          var last = process.hrtime(start);
           if (err) {
             utils.printBox(box, {prefix: '|=send Box:'});
+
             throw err;
           } else {
             utils.printBox(result, {prefix: '|=send Box:'});
             done(err, result);
           }
+          if (box.getTag(Constants.tags.DEBUG)) console.log(`>>time elapsed:${last[0] * 1000 + last[1] / 1000000} ms<<`);
         });
 "#endif";
 "#if process.env.NODE_ENV === 'production'";

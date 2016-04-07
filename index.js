@@ -7,6 +7,8 @@ module.exports = {
   Box: require('./lib/Box'),
   Constants: require('./lib/Constants'),
   Port: require('./lib/Port'),
+  
+  Source: require('./lib/Source'),
 
   Robots: require('./lib/robots'),
 

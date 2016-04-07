@@ -1,10 +1,6 @@
 var defaultPipeline = {
-  prodline() {
-    return [
-      _.map((box) => {
-        return box.print();
-      })
-    ]
+  pipeline(source, errHandler) {
+    return source._();
   }
 }
 
@@ -47,8 +43,12 @@ module.exports = (delegate) => {
       return this;
     }
 
-    pipeline(io, errHandler) {
-      return this.delegate.pipeline.call(this, io, errHandler);
+    getProdline(source, errHandler) {
+      return this.delegate.pipeline.call(this, source, errHandler);
+    }
+
+    _(source, errHandler) {
+      return this.getProdline(source, errHandler);
     }
   }
 

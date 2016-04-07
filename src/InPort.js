@@ -79,7 +79,7 @@ class InPort {
     if (filter) {
       return _(this.incomingStream).fork().accept(filter);
     }
-    return _(this.incomingStream);
+    return _(this.incomingStream).fork();
   }
 
   response() {
@@ -120,11 +120,11 @@ class InPort {
   }
 
   process(pattern, processor, parallel = 3) {
-    this.in().fork()
-      .accept(pattern)
+    this.in(pattern)
       .gp(processor, parallel) // => .robot(GeneralRobot(processor), parallel)
       .errors((err, rethrow) => {
         console.error(err.message);
+        rethrow(null, err.toResult());
       })
       .through(this.response())
       .each(()=>{});

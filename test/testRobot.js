@@ -47,6 +47,10 @@ exports['test Robot'] = {
         return ['c'];
       },
 
+      getModel() {
+        return 'Example Robot';
+      },
+
       process(box, done) {
         const a = box.get('a');
         const b = box.get('b');
@@ -67,6 +71,7 @@ exports['test Robot'] = {
       .map((v) => {
         return new Box(v)
       })
+      .debug(true)
       .checkpoint({
         "a&": 1,
         "b&": 2
