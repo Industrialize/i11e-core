@@ -6,15 +6,15 @@ exports['test pipeline'] = {
     const Box = require('../index').Box;
 
     var GreetingPipeline = createPipeline({
-      pipeline(source, target, errHandler) {
-        return source.in({
+      pipeline(io, errHandler) {
+        return io.source.in({
             $cmd: 'example.greeting'
           })
           .gp((box, done) => {
             var name = box.get('name');
             done(null, box.set('greetings', `Hello! ${name}`));
           })
-          .return(source);
+          .return(io.source);
       }
     });
 
@@ -22,7 +22,7 @@ exports['test pipeline'] = {
       mode: Constants.IN
     });
 
-    var pl = GreetingPipeline().pipeline(inputPort).drive();
+    var pl = GreetingPipeline().pipeline({source: inputPort}).drive();
 
     inputPort.send(new Box({
       $cmd: 'example.greeting',
