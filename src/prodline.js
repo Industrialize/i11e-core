@@ -11,6 +11,7 @@ var SetContentRobot = require('./robots').SetContentRobot;
 var Constants = require('./Constants');
 var Port = require('./Port');
 var createTransport = require('./Transport');
+var Source = require('./Source');
 
 var G = require('./Global');
 
@@ -86,6 +87,18 @@ _.addMethod('set', function(items) {
 
 _.addMethod('gp', function(fn, parallel) { // general purpose
   return this.robot(GeneralRobot(fn), parallel);
+});
+
+_.addMethod('branch', function(branches) {
+  var source = new Source();
+
+  for (let branch of branches) {
+    branch.init(source);
+  }
+
+  return this.doto((box) => {
+    source.push(box);
+  });
 });
 
 // -----------------------------------------------------------------------------

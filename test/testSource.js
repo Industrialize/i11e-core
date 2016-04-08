@@ -4,60 +4,46 @@ exports['test source'] = {
     const createRobot = require('../index').createRobot;
     const Box = require('../index').Box;
 
+    // a general source
+    var source = new Source([
+      new Box({
+        'cmd': 'example.cmd'
+      }
+    ]);
 
-    const _ = require('../index').prodline;
+    var Robot = createRobot({
+      process(box, done) {
+        box.set('greetings', 'Hello World!');
+        done(null, box);
+      }
+    });
 
-    var pl = _.pipeline(
-      _.gp((box, done) => {
-        box.set('greetings', 'HelloWorld!');
-      }),
-      _.map((box) => {
-        return box.set('greetings 2', 'HelloWorld!');
+    var count = 0;
+    source._()
+      // .robot(Robot())
+      .gp((box, done) => {
+        box.set('greetings', 'Hello World!');
+        done(null, box);
       })
-    )
+      .each((box) => {
+        console.log('first prod line');
+        box.print();
+        test.equal(box.get('greetings'), 'Hello World!');
+        count++;
+      });
 
-    _([new Box({})])
-      .through(pl)
-      .each(console.log)
-      .done();
+    source._()
+      .robot(Robot())
+      .each((box) => {
+        console.log('second prod line');
+        box.print();
+        test.equal(box.get('greetings'), 'Hello World!');
+        count++;
+      });
 
-
-    // var source = new Source();
-    //
-    // var Robot = createRobot({
-    //   process(box, done) {
-    //     box.set('greetings', 'Hello World!');
-    //
-    //     done(null, box);
-    //   }
-    // });
-    //
-    // var count = 0;
-    // source._()
-    //   .robot(Robot())
-    //   .each((box) => {
-    //     console.log('first prod line');
-    //     box.print();
-    //     test.equal(box.get('greetings'), 'Hello World!');
-    //     count++;
-    //   });
-    //
-    // source._()
-    //   .robot(Robot())
-    //   .each((box) => {
-    //     console.log('second prod line');
-    //     box.print();
-    //     test.equal(box.get('greetings'), 'Hello World!');
-    //     count++;
-    //   });
-    //
-    // source.push(new Box({
-    //   'cmd': 'example.cmd'
-    // }));
-    //
-    // setTimeout(()=>{
-    //   test.equal(count, 2);
-    //   test.done();
-    // }, 3000);
+    setTimeout(() => {
+      test.equal(count, 2);
+      test.done();
+    }, 3000);
   }
 }
