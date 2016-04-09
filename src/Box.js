@@ -124,7 +124,8 @@ class Box {
    * @return {Boolean}      true if data path exists otherwise false
    */
   has(path) {
-    return objectPath.has(this, this.pathMap(path));
+    let v = objectPath.get(this, this.pathMap(path));
+    return !!v && v != false;
   }
 
   /**

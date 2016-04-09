@@ -58,11 +58,29 @@ exports['test pipeline'] = {
     });
 
     var MonitoringPipeline = createPipeline({
+      isNotify() {
+        return true;
+      },
+
       prodline() {
         return this.source._()
           .gp((box, done) => {
-            console.log(box);
+            console.log('monitoring');
             test.equal(box.get('greetings'), 'Hello! John');
+            done(null, box);
+          });
+      }
+    });
+
+    var RequestPipeline = createPipeline({
+      isNotify() {
+        return false;
+      },
+
+      prodline() {
+        return this.source._()
+          .gp((box, done) => {
+            box.set('requested', true);
             done(null, box);
           });
       }
@@ -75,9 +93,18 @@ exports['test pipeline'] = {
     // here demonstrate how to use pipeline
     // 1. connect result handler to handle the pipeline result
     var pl = pipeline._()
-      .branch(MonitoringPipeline, MonitoringPipeline)
+      .branch(
+        MonitoringPipeline,
+        RequestPipeline
+      )
       .doto((box) => {
         test.equal(box.get('greetings'), 'Hello! John');
+        test.equal(box.get('requested'), true);
+        test.done();
+      })
+      .errors((err) => {
+        console.error(err.message);
+        test.ok(false, err.message);
         test.done();
       })
       .drive();
