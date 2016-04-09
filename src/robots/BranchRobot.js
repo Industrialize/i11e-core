@@ -21,20 +21,29 @@ module.exports = createRobotModel({
     });
 
     // build the production line for the branch
-    this.pipeline(this.source)
-      ._()
-      .doto((box) => {
-        let done = this.session.get(box._seq);
-        if (!done) throw createError(400, 'Must have a "done" method');
-        done(null, box);
-      })
-      .errors((err) => {
-        let box = err.source;
-        let done = this.session.get(box._seq);
-        if (!done) throw createError(400, 'Must have a "done" method');
-        done(err, box);
-      })
-      .drive();
+    if (this.pipeline.notify) {
+      this.pipeline(this.source)
+        ._()
+        .errors((err) => {
+          console.error('', err.message);
+        })
+        .drive();
+    } else {
+      this.pipeline(this.source)
+        ._()
+        .doto((box) => {
+          let done = this.session.get(box._seq);
+          if (!done) throw createError(400, 'Must have a "done" method');
+          done(null, box);
+        })
+        .errors((err) => {
+          let box = err.source;
+          let done = this.session.get(box._seq);
+          if (!done) throw createError(400, 'Must have a "done" method');
+          done(err, box);
+        })
+        .drive();
+    }
   },
 
   getModel() {
@@ -45,16 +54,24 @@ module.exports = createRobotModel({
     // duplicate the box
     let newBox = new Box(box);
 
-    // put the done function to the session
-    this.session.set(newBox._seq, done);
+    if (this.pipeline.notify) {
+      // return the original box to the production line
+      // the done method will be called in the production line's handler
+      // see initRobot() method
+      // put the done function to the session
+      this.session.set(newBox._seq, done);
 
-    // run the branch
-    this.source.push(newBox);
+      // run the branch
+      this.source.push(newBox);
 
-    // return the original box to the production line
-    // the done method will be called in the production line's handler
-    // see initRobot() method
-    // done(null, box);
+    } else {
+      // run the branch
+      this.source.push(newBox);
+
+      // return the original box directly
+      done(null, box);
+    }
+
   }
 
 });

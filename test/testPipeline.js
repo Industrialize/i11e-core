@@ -61,11 +61,12 @@ exports['test pipeline'] = {
       prodline() {
         return this.source._()
           .gp((box, done) => {
-            console.log('Monitoring', box);
+            console.log(box);
+            test.equal(box.get('greetings'), 'Hello! John');
             done(null, box);
           });
       }
-    })
+    });
 
 
     var source = new Source();
@@ -74,7 +75,7 @@ exports['test pipeline'] = {
     // here demonstrate how to use pipeline
     // 1. connect result handler to handle the pipeline result
     var pl = pipeline._()
-      .branch(MonitoringPipeline)
+      .branch(MonitoringPipeline, MonitoringPipeline)
       .doto((box) => {
         test.equal(box.get('greetings'), 'Hello! John');
         test.done();

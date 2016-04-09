@@ -6,7 +6,7 @@ var defaultPipeline = {
 }
 
 module.exports = (delegate) => {
-  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'run'];
+  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'push', '_', 'isNotify'];
   var _ = require('./prodline');
   var createError = require('./utils').createError;
 
@@ -18,6 +18,7 @@ module.exports = (delegate) => {
     constructor(source, options = {}) {
       this.type = "Unknown Production Line";
       this.options = options;
+      this.notify = false;
 
       if (!source) {
         throw createError(400, 'Need "source" options to init a pipeline');
@@ -26,6 +27,8 @@ module.exports = (delegate) => {
       this.source = source;
 
       this.setDelegate(delegate);
+
+      if (this.delegate.isNotify) this.notify = this.delegate.isNotify();
 
       if (this.delegate.initPipeline) {
         this.delegate.initPipeline.call(this);
