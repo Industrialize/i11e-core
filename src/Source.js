@@ -50,7 +50,7 @@ class Source {
    * @return {Source}     source itself
    */
   push(box) {
-    if (!Box.isBox) box = new Box(box);
+    if (!Box.isBox(box)) box = new Box(box);
 
     if (!this.options) {
       this.stream.push(box);

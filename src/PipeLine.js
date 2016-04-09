@@ -1,6 +1,7 @@
 var defaultPipeline = {
-  pipeline(source, errHandler) {
-    return source._();
+  prodline() {
+    // do nothing, just return the source production line
+    return this.source._();
   }
 }
 
@@ -16,6 +17,12 @@ module.exports = (delegate) => {
     constructor(options = {}) {
       this.type = "Unknown Production Line";
       this.options = options;
+
+      if (this.options.source) {
+        this.source = this.options.source;
+      } else {
+        throw createError(400, 'Need "source" options to init a pipeline');
+      }
 
       this.setDelegate(delegate);
 
@@ -43,12 +50,12 @@ module.exports = (delegate) => {
       return this;
     }
 
-    getProdline(source, errHandler) {
-      return this.delegate.pipeline.call(this, source, errHandler);
+    push(box) {
+      this.source.push(box);
     }
 
-    _(source, errHandler) {
-      return this.getProdline(source, errHandler);
+    _() {
+      return this.delegate.prodline.all(this);
     }
   }
 

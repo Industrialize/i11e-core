@@ -17,5 +17,10 @@ module.exports = {
   GeneralRobot: (fn) => {
     var GeneralRobotModel = require('./GeneralRobot');
     return new GeneralRobotModel(fn);
+  },
+
+  BranchRobot: (fn) => {
+    var BranchRobotModel = require('./BranchRobot');
+    return new BranchRobotModel(fn);
   }
 }

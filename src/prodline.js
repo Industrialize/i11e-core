@@ -8,10 +8,10 @@ var BoxValidationRobot = require('./robots').BoxValidationRobot;
 var TagRobot = require('./robots').TagRobot;
 var GeneralRobot = require('./robots').GeneralRobot;
 var SetContentRobot = require('./robots').SetContentRobot;
+var BranchRobot = require('./robots').BranchRobot;
 var Constants = require('./Constants');
 var Port = require('./Port');
 var createTransport = require('./Transport');
-var Source = require('./Source');
 
 var G = require('./Global');
 
@@ -44,9 +44,6 @@ _.addMethod('robot', function(robot, parallel) {
   }
 });
 
-// _.addMethod('prodline', function(pipeline) {
-//   return this.through(pipeline.process());
-// });
 
 // -----------------------------------------------------------------------------
 // Syntax sugar for commonly used robots
@@ -85,20 +82,16 @@ _.addMethod('set', function(items) {
   return this.robot(SetContentRobot(items));
 });
 
+_.addMethod('put', function(items) {
+  return this.robot(SetContentRobot(items));
+});
+
 _.addMethod('gp', function(fn, parallel) { // general purpose
   return this.robot(GeneralRobot(fn), parallel);
 });
 
-_.addMethod('branch', function(branches) {
-  var source = new Source();
-
-  for (let branch of branches) {
-    branch.init(source);
-  }
-
-  return this.doto((box) => {
-    source.push(box);
-  });
+_.addMethod('branch', function(branch) {
+  return this.robot(BranchRobot(branch));
 });
 
 // -----------------------------------------------------------------------------
