@@ -8,21 +8,22 @@ var defaultPipeline = {
 module.exports = (delegate) => {
   const ReserverdFunctions = ['setDelegate', 'initPipeline', 'run'];
   var _ = require('./prodline');
+  var createError = require('./utils').createError;
 
   if (!delegate) {
     delegate = defaultProdline;
   }
 
   class Pipeline {
-    constructor(options = {}) {
+    constructor(source, options = {}) {
       this.type = "Unknown Production Line";
       this.options = options;
 
-      if (this.options.source) {
-        this.source = this.options.source;
-      } else {
+      if (!source) {
         throw createError(400, 'Need "source" options to init a pipeline');
       }
+
+      this.source = source;
 
       this.setDelegate(delegate);
 
@@ -50,12 +51,22 @@ module.exports = (delegate) => {
       return this;
     }
 
+    /**
+     * Push a box to the production line
+     * @param  {Box} box the box to be pushed to the production line
+     * @return {Pipeline}     the pipeline instance
+     */
     push(box) {
       this.source.push(box);
+      return this;
     }
 
+    /**
+     * Get the production line
+     * @return {Stream} production line stream
+     */
     _() {
-      return this.delegate.prodline.all(this);
+      return this.delegate.prodline.call(this);
     }
   }
 

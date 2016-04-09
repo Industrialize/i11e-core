@@ -90,8 +90,8 @@ _.addMethod('gp', function(fn, parallel) { // general purpose
   return this.robot(GeneralRobot(fn), parallel);
 });
 
-_.addMethod('branch', function(branch) {
-  return this.robot(BranchRobot(branch));
+_.addMethod('branch', function(pipeline) {
+  return this.robot(BranchRobot(pipeline));
 });
 
 // -----------------------------------------------------------------------------
