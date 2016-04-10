@@ -1,3 +1,9 @@
+/**
+ * A ring shape production line
+ *
+ * It use a loop pipeline to count from 0 to 10
+ */
+
 const i11e = require('../index');
 var createPipeline = i11e.createPipeline;
 var Source = i11e.Source;
@@ -18,7 +24,6 @@ var LoopPipeline = createPipeline({
   process() {
     return this.source._()
       .filter(this.filter)
-      // .filter((box) => {return box.get('count') < 10})
       .gp((box, done) => {
         var count = box.get('count');
         console.log('Loop:', count);

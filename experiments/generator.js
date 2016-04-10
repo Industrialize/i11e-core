@@ -1,3 +1,7 @@
+/**
+ * Demo: How to use an Array to construct a production source
+ */
+
 const _ = require('../index').prodline;
 
 var buffer = [1, 2, 3];
