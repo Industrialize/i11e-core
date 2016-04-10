@@ -6,7 +6,7 @@ exports['test pipeline'] = {
     const Box = require('../index').Box;
 
     var GreetingPipeline = createPipeline({
-      prodline() {
+      process() {
         return this.source._()
           .accept({
             $cmd: 'example.greeting'
@@ -19,7 +19,7 @@ exports['test pipeline'] = {
     });
 
     var source = new Source();
-    var pipeline = GreetingPipeline(source);
+    var pipeline = GreetingPipeline().setSource(source);
 
 
     // here demonstrate how to use pipeline
@@ -45,7 +45,7 @@ exports['test pipeline'] = {
     const Box = require('../index').Box;
 
     var GreetingPipeline = createPipeline({
-      prodline() {
+      process() {
         return this.source._()
           .accept({
             $cmd: 'example.greeting'
@@ -62,10 +62,11 @@ exports['test pipeline'] = {
         return true;
       },
 
-      prodline() {
+      process() {
         return this.source._()
           .gp((box, done) => {
-            console.log('monitoring');
+            console.log('branch pipeline: notify, processing box:');
+            box.print();
             test.equal(box.get('greetings'), 'Hello! John');
             done(null, box);
           });
@@ -77,9 +78,11 @@ exports['test pipeline'] = {
         return false;
       },
 
-      prodline() {
+      process() {
         return this.source._()
           .gp((box, done) => {
+            console.log('branch pipeline: request, processing box:');
+            box.print();
             box.set('requested', true);
             done(null, box);
           });
@@ -88,16 +91,22 @@ exports['test pipeline'] = {
 
 
     var source = new Source();
-    var pipeline = GreetingPipeline(source);
+    var pipeline = GreetingPipeline().setSource(source);
 
     // here demonstrate how to use pipeline
     // 1. connect result handler to handle the pipeline result
     var pl = pipeline._()
+      .doto((box) => {
+        console.log('trunk pipeline, processing box:');
+        box.print();
+      })
       .branch(
-        MonitoringPipeline,
-        RequestPipeline
+        MonitoringPipeline(),
+        RequestPipeline()
       )
       .doto((box) => {
+        console.log('trunk pipeline, processing box:');
+        box.print();
         test.equal(box.get('greetings'), 'Hello! John');
         test.equal(box.get('requested'), true);
         test.done();

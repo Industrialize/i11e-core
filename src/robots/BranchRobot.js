@@ -5,12 +5,13 @@ const NodeCache = require('node-cache');
 var createError = require('../utils').createError;
 
 
+/**
+ * BranchRobotModel
+ * @param  {Pipeline}   the pipeline for the branch
+ * @return {Class}   a new Robot Model class
+ */
 module.exports = createRobotModel({
   initRobot() {
-    if (typeof this.options !== 'function') {
-      throw createError(400, 'BranchRobot requires a function as argument');
-    }
-
     this.pipeline = this.options;
     this.source = new Source();
 
@@ -21,9 +22,10 @@ module.exports = createRobotModel({
     });
 
     // build the production line for the branch
-    if (this.pipeline.notify) {
+    if (this.pipeline.isNotify()) {
       // notify branch, just run the branch. Do NOT need to merge the result
-      this.pipeline(this.source)
+      this.pipeline
+        .setSource(this.source)
         ._()
         .errors((err) => {
           console.error('', err.message);
@@ -31,7 +33,8 @@ module.exports = createRobotModel({
         .drive();
     } else {
       // request branch, need to merge the result
-      this.pipeline(this.source)
+      this.pipeline
+        .setSource(this.source)
         ._()
         .doto((box) => {
           // get session value
@@ -73,7 +76,7 @@ module.exports = createRobotModel({
     // duplicate the box
     let newBox = new Box(box);
 
-    if (!this.pipeline.notify) { // check if the pipeline is a request or notify
+    if (!this.pipeline.isNotify()) { // check if the pipeline is a request or notify
       // return the original box to the production line
       // the done method will be called in the production line's handler
       // see initRobot() method

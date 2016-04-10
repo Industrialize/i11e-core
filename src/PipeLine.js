@@ -1,12 +1,12 @@
 var defaultPipeline = {
-  prodline() {
+  process() {
     // do nothing, just return the source production line
     return this.source._();
   }
 }
 
 module.exports = (delegate) => {
-  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'push', '_', 'isNotify'];
+  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'push', '_', 'isNotify', 'process'];
   var _ = require('./prodline');
   var createError = require('./utils').createError;
 
@@ -15,16 +15,11 @@ module.exports = (delegate) => {
   }
 
   class Pipeline {
-    constructor(source, options = {}) {
+    constructor(options = {}) {
       this.type = "Unknown Production Line";
       this.options = options;
-      this.notify = false;
 
-      if (!source) {
-        throw createError(400, 'Need "source" options to init a pipeline');
-      }
-
-      this.source = source;
+      this.source = null;
 
       this.setDelegate(delegate);
 
@@ -33,6 +28,21 @@ module.exports = (delegate) => {
       if (this.delegate.initPipeline) {
         this.delegate.initPipeline.call(this);
       }
+    }
+
+    isNotify() {
+      if (this.options.hasOwnProperty('notify')) {
+        return !!this.options.notify;
+      }
+
+      if (typeof this.delegate.isNotify) return this.delegate.isNotify();
+
+      return false;
+    }
+
+    setSource(source) {
+      this.source = source;
+      return this;
     }
 
     setDelegate(delegate) {
@@ -69,7 +79,10 @@ module.exports = (delegate) => {
      * @return {Stream} production line stream
      */
     _() {
-      return this.delegate.prodline.call(this);
+      if (!this.source) {
+        throw createError(400, 'No "source" found for the pipeline, please call setSource()');
+      }
+      return this.delegate.process.call(this);
     }
   }
 

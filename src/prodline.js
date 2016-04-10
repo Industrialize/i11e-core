@@ -138,6 +138,10 @@ _.addMethod('debug', function(debug) {
 "#endif"
 
 _.addMethod('accept', function(properties) {
+  if (typeof properties === 'function') {
+    return this.filter(properties);
+  }
+
   return this.filter(function(box) {
     for (var key in properties) {
       if (properties.hasOwnProperty(key)) {
