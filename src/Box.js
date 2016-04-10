@@ -244,6 +244,8 @@ class Box {
    * @return {String} box id
    */
   getId() {
+    let id = this.getTag(Constants.tags.ID);
+    if (id) return id;
     return this._seq;
   }
 
