@@ -1,6 +1,59 @@
 const _ = require('./prodline');
-const PassThrough = require('stream').PassThrough;
 const Box = require('./Box');
+
+class Stream {
+  constructor() {
+    const EventEmitter = require('eventemitter3');
+    this.buffer = new EventEmitter();
+  }
+
+  push(box) {
+    this.buffer.emit('box', box);
+  }
+
+  toGenerator() {
+    return _('box', this.buffer);
+  }
+}
+
+// stream implemented with ArrayList
+// class Stream {
+//   constructor() {
+//     this.buffer = [];
+//   }
+//
+//   push(box) {
+//     this.buffer.push(box);
+//   }
+//
+//   toGenerator() {
+//     return _((push, next) => {
+//       if (this.buffer.length > 0) {
+//         push(null, this.buffer.shift());
+//       }
+//
+//       process.nextTick(next);
+//     });
+//   }
+// }
+
+// stream implemented with PassThrough
+// class Stream {
+//   constructor() {
+//     const PassThrough = require('stream').PassThrough;
+//     this.buffer = new PassThrough({
+//       objectMode: true
+//     });
+//   }
+//
+//   push(box) {
+//     this.buffer.push(box);
+//   }
+//
+//   toGenerator() {
+//     return _(this.buffer);
+//   }
+// }
 
 /**
  * Production line source
@@ -16,9 +69,7 @@ class Source {
     this.options = options;
 
     if (!this.options) {
-      this.stream = new PassThrough({
-        objectMode: true
-      });
+      this.stream = new Stream();
     }
   }
 
@@ -28,7 +79,7 @@ class Source {
    * @return {Stream} highland stream
    */
   getProdline() {
-    if (!this.options) return _(this.stream).fork();
+    if (!this.options) return this.stream.toGenerator().fork();
     return _(this.options).fork();
   }
 
@@ -37,7 +88,7 @@ class Source {
    * @return {Stream} highland stream
    */
   _() {
-    if (!this.options) return _(this.stream).fork();
+    if (!this.options) return this.stream.toGenerator().fork();
     return _(this.options).fork();
   }
 
@@ -59,6 +110,10 @@ class Source {
     }
 
     return this;
+  }
+
+  end() {
+    this.stream.push(_.nil);
   }
 }
 

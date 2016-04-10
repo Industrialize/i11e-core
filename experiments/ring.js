@@ -42,17 +42,22 @@ var pipeline = Trunk().setSource(source);
 pipeline._()
   .branch(
     LoopPipeline({
-      entry:pipeline,
-      filter: (box) => {return box.get('count') < 10},
+      entry: pipeline,
+      filter: (box) => {
+        return box.get('count') < 10
+      },
       notify: false
     })
   )
-  .filter((box) => {return box.get('count') >= 10})
+  .filter((box) => {
+    return box.get('count') >= 10
+  })
   .doto((box) => {
     console.log('Result:', box.get('count'));
   })
   .drive();
 
-pipeline.push(new Box({
-  count: 0
-}));
+pipeline
+  .push(new Box({
+    count: 0
+  }));

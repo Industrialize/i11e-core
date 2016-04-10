@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "deep-diff": "^0.3.3",
+    "eventemitter3": "^1.2.0",
     "extend": "^3.0.0",
     "isstream": "^0.1.2",
     "minimist": "^1.2.0",
