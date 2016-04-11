@@ -30,6 +30,10 @@ module.exports = {
     return error;
   },
 
+  join(a, b, options) {
+    a.join(b, options)
+  },
+
   /**
    * Wrap a node callback stype function to a robot
    * @param  {String} model  the model name of the Robot

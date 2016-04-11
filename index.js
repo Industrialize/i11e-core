@@ -7,7 +7,7 @@ module.exports = {
   Box: require('./lib/Box'),
   Constants: require('./lib/Constants'),
   Port: require('./lib/Port'),
-  
+
   Source: require('./lib/Source'),
 
   Robots: require('./lib/robots'),
@@ -41,5 +41,7 @@ module.exports = {
     }
   },
 
-  createError: require('./lib/utils').createError
+  createError: require('./lib/utils').createError,
+
+  join: require('./lib/utils').join
 }

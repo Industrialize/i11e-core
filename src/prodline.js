@@ -103,7 +103,11 @@ _.addMethod('branch', function(...pipelines) {
 // -----------------------------------------------------------------------------
 
 _.addMethod('join', function(pipeline) {
+  this.doto((box) => {
+    pipeline.push(box);
+  }).drive();
 
+  return pipeline._();
 });
 
 "#if process.env.NODE_ENV !== 'production'";
@@ -138,6 +142,10 @@ _.addMethod('debug', function(debug) {
 "#endif"
 
 _.addMethod('accept', function(properties) {
+  if (!properties) {
+    return true;
+  }
+
   if (typeof properties === 'function') {
     return this.filter(properties);
   }

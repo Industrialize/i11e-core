@@ -5,7 +5,8 @@
   "scripts": {
     "clean": "rm -R lib",
     "test": "nodeunit test & nodeunit test/examples & nodeunit test/robots",
-    "build": "babel src -d lib"
+    "build": "babel src -d lib",
+    "dev-build": "babel src -d lib --source-maps"
   },
   "main": "index.js",
   "keywords": [

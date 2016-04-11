@@ -18,9 +18,7 @@ exports['test pipeline'] = {
       }
     });
 
-    var source = new Source();
-    var pipeline = GreetingPipeline().setSource(source);
-
+    var pipeline = GreetingPipeline()
 
     // here demonstrate how to use pipeline
     // 1. connect result handler to handle the pipeline result
@@ -89,9 +87,7 @@ exports['test pipeline'] = {
       }
     });
 
-
-    var source = new Source();
-    var pipeline = GreetingPipeline().setSource(source);
+    var pipeline = GreetingPipeline();
 
     // here demonstrate how to use pipeline
     // 1. connect result handler to handle the pipeline result

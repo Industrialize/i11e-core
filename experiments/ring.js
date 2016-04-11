@@ -41,19 +41,18 @@ var LoopPipeline = createPipeline({
   }
 });
 
-var source = new Source();
-var pipeline = Trunk().setSource(source);
+var pipeline = Trunk();
 
 pipeline._()
-  .branch(
-    LoopPipeline({
-      entry: pipeline,
-      filter: (box) => {
-        return box.get('count') < 10
-      },
-      notify: false
+  .branch({
+      notify: false,
+      pipeline: LoopPipeline({
+        entry: pipeline,
+        filter: (box) => {
+          return box.get('count') < 10
+        }
+      })
     })
-  )
   .filter((box) => {
     return box.get('count') >= 10
   })

@@ -12,8 +12,8 @@ var createError = require('../utils').createError;
  */
 module.exports = createRobotModel({
   initRobot() {
-    this.pipeline = this.options;
-    this.source = new Source();
+    this.pipeline = this.options.pipeline;
+    this.notify = this.options.notify || false;
 
     this.session = new NodeCache({
       stdTTL: this.options.ttl || 100,
@@ -22,10 +22,9 @@ module.exports = createRobotModel({
     });
 
     // build the production line for the branch
-    if (this.pipeline.isNotify()) {
+    if (this.notify) {
       // notify branch, just run the branch. Do NOT need to merge the result
       this.pipeline
-        .setSource(this.source)
         ._()
         .errors((err) => {
           console.error('', err.message);
@@ -34,7 +33,6 @@ module.exports = createRobotModel({
     } else {
       // request branch, need to merge the result
       this.pipeline
-        .setSource(this.source)
         ._()
         .doto((box) => {
           // get session value
@@ -76,7 +74,7 @@ module.exports = createRobotModel({
     // duplicate the box
     let newBox = new Box(box);
 
-    if (!this.pipeline.isNotify()) { // check if the pipeline is a request or notify
+    if (!this.notify) { // check if the pipeline is a request or notify
       // return the original box to the production line
       // the done method will be called in the production line's handler
       // see initRobot() method
@@ -87,11 +85,11 @@ module.exports = createRobotModel({
       });
 
       // run the branch
-      this.source.push(newBox);
+      this.pipeline.push(newBox);
 
     } else {
       // run the branch
-      this.source.push(newBox);
+      this.pipeline.push(newBox);
 
       // return the original box directly
       done(null, box);

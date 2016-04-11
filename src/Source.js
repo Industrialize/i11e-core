@@ -69,7 +69,7 @@ class Source {
     this.options = options;
 
     if (!this.options) {
-      this.stream = new Stream();
+      this.streams = [];
     }
   }
 
@@ -79,6 +79,8 @@ class Source {
    * @return {Stream} highland stream
    */
   getProdline() {
+    let stream = new Stream();
+    this.streams.push(stream);
     if (!this.options) return this.stream.toGenerator().fork();
     return _(this.options).fork();
   }
@@ -88,7 +90,9 @@ class Source {
    * @return {Stream} highland stream
    */
   _() {
-    if (!this.options) return this.stream.toGenerator().fork();
+    let stream = new Stream();
+    this.streams.push(stream);
+    if (!this.options) return stream.toGenerator().fork();
     return _(this.options).fork();
   }
 
@@ -104,16 +108,14 @@ class Source {
     if (!Box.isBox(box)) box = new Box(box);
 
     if (!this.options) {
-      this.stream.push(box);
+      for (let stream of this.streams) {
+        stream.push(new Box(box));  // duplicate the box
+      }
     } else {
       console.warn('Can NOT "push" box to a finite production line');
     }
 
     return this;
-  }
-
-  end() {
-    this.stream.push(_.nil);
   }
 }
 
