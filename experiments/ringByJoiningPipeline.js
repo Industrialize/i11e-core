@@ -27,6 +27,8 @@ var ResultPipeline = createPipeline({
     return this.source._()
       .doto((box) => {
         console.log('Result:', box.get('count'));
+        var diff = process.hrtime(start);
+        console.log('>> time elapsed:', diff[0] * 1000 + diff[1] / 1000000, 'ms <<');
       })
   }
 })
@@ -35,21 +37,25 @@ var trunk = Trunk();
 var inc = IncPipeline();
 var result = ResultPipeline();
 
+const loop = 10;
+
 i11e.join(trunk, inc);
 
 i11e.join(inc, trunk, {
   filter: (box) => {
-    return box.get('count') < 10;
+    return box.get('count') < loop;
   }
 });
 
 i11e.join(inc, result, {
   filter: (box) => {
-    return box.get('count') >= 10;
+    return box.get('count') >= loop;
   }
 });
 
 // run all the pipelines
+const start = process.hrtime();
+
 trunk._().drive();
 inc._().drive();
 result._().drive();

@@ -43,21 +43,26 @@ var LoopPipeline = createPipeline({
 
 var pipeline = Trunk();
 
+const loop = 10;
+
+const start = process.hrtime();
 pipeline._()
   .branch({
       notify: false,
       pipeline: LoopPipeline({
         entry: pipeline,
         filter: (box) => {
-          return box.get('count') < 10
+          return box.get('count') < loop
         }
       })
     })
   .filter((box) => {
-    return box.get('count') >= 10
+    return box.get('count') >= loop
   })
   .doto((box) => {
     console.log('Result:', box.get('count'));
+    var diff = process.hrtime(start);
+    console.log('>> time elapsed:', diff[0] * 1000 + diff[1] / 1000000, 'ms <<');
   })
   .drive();
 
