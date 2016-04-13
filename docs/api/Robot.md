@@ -47,7 +47,7 @@ const _ = i11e.prodline;
 const Box = i11e.Box;
 
 // create a new greeting robot
-greetingRobot = GreetingRobotModel({
+var greetingRobot = GreetingRobotModel({
   name: 'John'
 });
 
@@ -56,7 +56,7 @@ greetingRobot = GreetingRobotModel({
 // in the box, which is put by the GreetingRobot
 
 // construct a production line
-_(new Box())  // <== this is your input
+_([new Box()])  // <== this is your input
 
   // deploy a GreetingRobot
   .robot(greetingRobot) // <== process the input
@@ -112,5 +112,3 @@ return the robot model name
 ### process(box, done)
 
 process the box and return it back to production line. If the robot is in sync mode (by overriding isSync() method), it ignores the *done* parameter. If the robot is in async mode (default mode), the output box must be passed to the *done* function.
-
- 

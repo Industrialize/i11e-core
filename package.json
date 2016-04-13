@@ -1,7 +1,11 @@
 {
-  "name": "i11e",
+  "name": "i11e-core",
   "version": "0.1.0",
-  "description": "industrialize",
+  "description": "industrialize core",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/Industrialize/i11e-core.git"
+  },
   "scripts": {
     "clean": "rm -R lib",
     "test": "nodeunit test & nodeunit test/examples & nodeunit test/robots",
