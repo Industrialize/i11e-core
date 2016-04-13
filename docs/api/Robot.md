@@ -4,7 +4,7 @@
 Robot is the basic unit in **Industrialize**. It consumes a box from production line, processes it, and returns the box to the production line for further processing (by next robot).
 
 ````
-production line: => [box] => | Robot | => [processed box] => | Robot | =>
+production line: => [box] => -Robot- => [processed box] => -Robot- =>
 ````
 
 ## How to create a new Robot Model
@@ -77,7 +77,7 @@ Results:
 
 ### initRobot()
 
-Called when the robot is initiated. You can use *this.options* to get the robot parameter. for example:
+Optional, called when the robot is initiated. You can use *this.options* to get the robot parameter. for example:
 
 ````javascript
 const i11e = require('i11e');
@@ -99,16 +99,30 @@ var robot = RobotModel(options);  // the options argument will be seen in initRo
 
 ### isSync()
 
-return true or false.
+Optional, return true (sync mode robot) or false (async mode robot).
 
 If this method return true, the robot works in *sync* mode, and the ***process*** method ignores the second callback parameter 'done'. It must return a box.
 
+````javascript
+process(box) {
+  box.set('greetings', 'Hello World!');
+  return box;
+}
+````
+
 If this method return false, the robot works in *async* mode, and the ***process*** method accepts the second callback function 'done'. The output box is passed through this callback function.
+
+````javascript
+process(box, done) {
+  box.set('greetings', 'Hello World!');
+  done(null, box);
+}
+````
 
 ### getModel()
 
-return the robot model name
+Optional, return the robot model name
 
 ### process(box, done)
 
-process the box and return it back to production line. If the robot is in sync mode (by overriding isSync() method), it ignores the *done* parameter. If the robot is in async mode (default mode), the output box must be passed to the *done* function.
+process the box and return it back to production line. If the robot is in sync mode (by overriding isSync() method), it ignores the *done* parameter, and return a box. If the robot is in async mode (default mode), the output box must be passed to the *done* function.

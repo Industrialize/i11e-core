@@ -1,4 +1,4 @@
-const i11e = require('../index');
+const i11e = require('../../index');
 const _ = i11e.prodline;
 const Box = i11e.Box;
 
@@ -27,7 +27,7 @@ const GreetingRobotModel = i11e.createRobot({
 
 // create a new greeting robot
 var greetingRobot = GreetingRobotModel({
-  name: 'John'
+  name: 'John'  // init the robot
 });
 
 // construct a production line and put one empty box on it
