@@ -87,7 +87,16 @@ _.addMethod('put', function(items) {
 });
 
 _.addMethod('gp', function(fn, parallel) { // general purpose
-  return this.robot(GeneralRobot(fn), parallel);
+  return this.robot(GeneralRobot({
+    fn: fn
+  }), parallel);
+});
+
+_.addMethod('gpSync', function(fn) {
+  return this.robot(GeneralRobot({
+    fn: fn,
+    sync: true
+  }));
 });
 
 _.addMethod('branch', function(...pipelines) {
@@ -101,15 +110,6 @@ _.addMethod('branch', function(...pipelines) {
 // -----------------------------------------------------------------------------
 // Useful tool in prodline, which is not implemented as a robot
 // -----------------------------------------------------------------------------
-
-_.addMethod('join', function(pipeline) {
-  this.doto((box) => {
-    pipeline.push(box);
-  }).drive();
-
-  return pipeline._();
-});
-
 "#if process.env.NODE_ENV !== 'production'";
 _.addMethod('debug', function(debug, debug_tag, unboxFilter) {
   var tags = {
@@ -120,7 +120,7 @@ _.addMethod('debug', function(debug, debug_tag, unboxFilter) {
   };
 
   // do not use tag robot here, otherwise it will print the tag robot info
-  return this.map((box) =>{
+  return this.map((box) => {
     for (var key in tags) {
       if (tags.hasOwnProperty(key)) {
         if (tags[key] == null) {

@@ -18,7 +18,6 @@ var IncPipeline = createPipeline({
   }
 });
 
-
 var DoublePipeline = createPipeline({
   process() {
     return this.source._()
@@ -43,7 +42,7 @@ var TriplePipeline = createPipeline({
         done(null, box);
       });
   }
-})
+});
 
 
 // ----------------------------------------------------------------------------
@@ -114,7 +113,6 @@ doublePL._().each((box)=>{
 triplePL._().each((box)=>{
   box.print();
 });
-
 
 // push input to the incPL's head
 incPL.$().push(new Box({

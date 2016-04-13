@@ -86,7 +86,7 @@ class Source {
   }
 
   /**
-   * A short name for getProdline
+   * A short name for getProdline, the tail of the source
    * @return {Stream} highland stream
    */
   _() {
