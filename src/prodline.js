@@ -174,8 +174,9 @@ _.addMethod('notify', function(outputPort) {
   return this.through(outputPort.out(true));
 });
 
-_.addMethod('drive', function() {
-  return this.each((box) => {});
+_.addMethod('drive', function(fn) {
+  if (!fn) fn = (box) => {};
+  return this.each(fn);
 });
 
 "#if process.env.NODE_ENV !== 'production'";
