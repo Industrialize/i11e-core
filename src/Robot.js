@@ -49,20 +49,18 @@ module.exports = (delegate) => {
     process(box, done) {
       try {
 "#if process.env.NODE_ENV !== 'production'";
-        const utils = require('./utils');
-        utils.printRobot(this.model, box);
-        var start = process.hrtime();
-        return this.delegate.process.call(this, box, (err, result) => {
-          var last = process.hrtime(start);
-          if (err) {
-            utils.printBox(box, {prefix: '|=send Box:'});
+        var visitorCtx = {};
+        const i11e = require('../index');
+        var visitors = i11e.visitors.getRobotVisitors();
+        for (let visitor of visitors) {
+          visitor.enter(this, box, visitorCtx);
+        }
 
-            throw err;
-          } else {
-            utils.printBox(result, {prefix: '|=send Box:'});
-            done(err, result);
+        return this.delegate.process.call(this, box, (err, result) => {
+          for (let visitor of visitors) {
+            visitor.exit(this, err, result, visitorCtx);
           }
-          if (box.getTag(Constants.tags.DEBUG)) console.log(`>>time elapsed:${last[0] * 1000 + last[1] / 1000000} ms<<`);
+          done(err, result);
         });
 "#endif";
 "#if process.env.NODE_ENV === 'production'";

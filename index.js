@@ -1,4 +1,16 @@
-module.exports = {
+const VisitorRegistry = require('./lib/VisitorRegistry');
+var visitorRegistry = new VisitorRegistry();
+
+"#if process.env.NODE_ENV !== 'production'";
+const DebugTraceRobotVisitor = require('./lib/visitors/DebugTraceRobotVisitor');
+visitorRegistry.register(DebugTraceRobotVisitor());
+
+const DebugTracePipelineVisitor = require('./lib/visitors/DebugTracePipelineVisitor');
+visitorRegistry.register(DebugTracePipelineVisitor());
+"#endif";
+
+
+var exports = {
   highland: require('./lib/prodline'),
   prodline: require('./lib/prodline'),
 
@@ -41,7 +53,19 @@ module.exports = {
     }
   },
 
+  // created visitor will be a function
+  createVisitor: (delegate) => {
+    return (options) => {
+      var Visitor = require('./lib/Visitor')(delegate);
+      return new Visitor(options);
+    }
+  },
+
   createError: require('./lib/utils').createError,
 
-  join: require('./lib/utils').join
+  join: require('./lib/utils').join,
+
+  visitors: visitorRegistry
 }
+
+module.exports = exports;

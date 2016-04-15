@@ -30,9 +30,11 @@ module.exports = (delegate) => {
      */
     constructor(name, options = {}) {
       this.name = name;
-      this.option = options;
+      this.options = options;
       this.source = null;
       this.target = null;
+
+      this.observers = {};
 
       this.outgoingListener = null;
 
@@ -104,8 +106,47 @@ module.exports = (delegate) => {
     }
 
     incomingListener(box, done) {
+      // add additional tags when transport
+      if (this.options.tags) {
+        for (let tag in this.options.tags) {
+          box.addTag(tag, this.options.tags[tag]);
+        }
+      }
+
+      try {
+        for (let name in this.observers) {
+          this.observers[name](box);
+        }
+      } catch (err) {
+        return done(err, box);
+      }
+
       this.delegate.incomingListener.call(this, box, done);
     }
+
+    addTags(tags) {
+      this.options.tags = tags;
+      return this;
+    }
+
+    observe(observer) {
+      this.observers[observer.name] = observer.observer;
+      return this;
+    }
+
+    unobserve(observerName) {
+      if (!observerName) {
+        // disconnect all
+        this.observers = {};
+        return this;
+      }
+
+      if (this.observers.hasOwnProperty(observerName)) {
+        delete this.observers[observerName];
+      }
+      return this;
+    }
+
   }
 
   return Transport;

@@ -172,7 +172,21 @@ class Box {
    * @param {Object} tag  tag obejct
    */
   addTag(name, tag) {
-    this._tags[name] = tag;
+    if (name === Constants.tags.GLOSSARY) {
+      let glossary = this.getGlossaryTag();
+      if (!glossary) {
+        this._tags[name] = tag;
+      } else {
+        for (let word in tag) {
+          if (glossary.hasOwnProperty(tag[word])) {
+            tag[word] = glossary[tag[word]];
+          }
+        }
+        this._tags[name] = tag;
+      }
+    } else {
+      this._tags[name] = tag;
+    }
     return this;
   }
 
@@ -278,7 +292,11 @@ class Box {
    * @param {Map} tag the glossary
    */
   setGlossaryTag(tag) {
-    return !!tag ? this.addTag(Constants.tags.GLOSSARY, tag) : this.removeTag(Constants.tags.GLOSSARY);
+    if (!tag) {
+      return this.removeTag(Constants.tag.GLOSSARY);
+    } else {
+      return this.addTag(Constants.tags.GLOSSARY, tag);
+    }
   }
 
   print(showHidden, showTag) {

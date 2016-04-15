@@ -193,7 +193,7 @@ class Port {
   }
 
   /**
-   * Input box stream of the port
+   * Input box source of the port
    *
    * @return {Stream} input box stream
    */
@@ -203,6 +203,14 @@ class Port {
     }
 
     return this.delegate.in();
+  }
+
+  /**
+   * Short name for in()
+   * @return {Stream} input box stream
+   */
+  _() {
+    return this.in();
   }
 
   /**

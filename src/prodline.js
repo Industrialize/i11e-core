@@ -10,7 +10,6 @@ var GeneralRobot = require('./robots').GeneralRobot;
 var SetContentRobot = require('./robots').SetContentRobot;
 var BranchRobot = require('./robots').BranchRobot;
 var Constants = require('./Constants');
-var Port = require('./Port');
 var createTransport = require('./Transport');
 
 var G = require('./Global');

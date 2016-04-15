@@ -6,21 +6,46 @@ var defaultPipeline = {
 }
 
 const createPipeline = (delegate) => {
-  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'getHead', 'getTail', 'push', '_', '$', 'process'];
+  const ReserverdFunctions = ['setDelegate', 'initPipeline', 'getModel', 'getHead', 'getTail', 'push', '_', '$', 'process'];
   var _ = require('./prodline');
   var createError = require('./utils').createError;
   var Source = require('./Source');
   var Box = require('./Box');
+  const Constants = require('./Constants');
 
   if (!delegate) {
     delegate = defaultPipeline;
+  }
+
+  class SourceWrapper{
+    constructor(pipeline, source) {
+      this.pipeline = pipeline;
+      this.source = source;
+    }
+
+    push(box) {
+"#if process.env.NODE_ENV !== 'production'";
+      var visitorCtx = {};
+      box.set('__VisitorCtx__', visitorCtx);
+      const i11e = require('../index');
+      var visitors = i11e.visitors.getPipelineVisitors();
+      for (let visitor of visitors) {
+        visitor.enter(this.pipeline, box, visitorCtx);
+      }
+"#endif";
+      return this.source.push(box);
+    }
+
+    _() {
+      return this.source._();
+    }
   }
 
   class Pipeline {
     constructor(options = {}) {
       this.model = "Unknown Production Line";
       this.options = options;
-      this.source = new Source();
+      this.source = new SourceWrapper(this, new Source());
       this.tail = null;
 
       this.outgoings = [];
@@ -49,6 +74,10 @@ const createPipeline = (delegate) => {
       }
 
       return this;
+    }
+
+    getModel() {
+      return this.model;
     }
 
     /**
@@ -95,6 +124,14 @@ const createPipeline = (delegate) => {
       if (!this.tail) {
         this.tail = this.delegate.process.call(this)
           .doto((box) => {
+"#if process.env.NODE_ENV !== 'production'";
+            const i11e = require('../index');
+            var visitors = i11e.visitors.getPipelineVisitors();
+            for (let visitor of visitors) {
+              visitor.exit(this, null, box, box.get('__VisitorCtx__'));
+            }
+"#endif";
+
             for (let outgoing of this.outgoings) {
               let stream = _([new Box(box)]);
 

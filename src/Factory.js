@@ -1,14 +1,13 @@
 const Port = require('./Port');
 
-const ReserverdFunctions = ['setDelegate', 'getName', 'getType', 'getPort', 'startup', 'shutdown'];
+const ReserverdFunctions = ['setDelegate', 'getType', 'definePorts', 'startup', 'shutdown'];
 
 module.exports = (delegate) => {
   class Factory {
     constructor(name, options = {}) {
       this.name = name;
       this.type = null;
-      this.ports = [];
-      this.portMap = {};
+      this.ports = {};
       this.options = options;
 
       this.setDelegate(delegate);
@@ -17,15 +16,14 @@ module.exports = (delegate) => {
     setDelegate(delegate) {
       this.delegate = delegate;
 
-      if (this.delegate.getPorts) {
-        let ports = this.delegate.getPorts();
+      if (this.delegate.definePorts) {
+        let ports = this.delegate.definePorts();
 
         for (var i = 0; i < ports.length; i++) {
           let port = new Port(ports[i][0], {
             mode: ports[i][1]
           });
-          this.ports.push(port);
-          this.portMap[port.name] = port;
+          this.ports[port.name] = port;
         }
       }
 
@@ -49,22 +47,24 @@ module.exports = (delegate) => {
       return this.name;
     }
 
-    getPort(name) {
-      if (this.portMap.hasOwnProperty(name)) {
-        return this.portMap[name];
+    getPorts(name) {
+      if (this.ports.hasOwnProperty(name)) {
+        return this.ports[name];
       }
 
       return null;
     }
 
     startup(signal) {
-      if (this.delegate)
+      if (this.delegate){
         return this.delegate.startup.call(this, signal);
+      }
     }
 
     shutdown() {
-      if (this.delegate)
+      if (this.delegate) {
         return this.delegate.shutdown.call(this);
+      }
     }
   }
 
