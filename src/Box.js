@@ -191,6 +191,19 @@ class Box {
   }
 
   /**
+   * Check if a tag exists
+   * @param  {String}  name the tag name
+   * @return {Boolean}      true if tag exist otherwise false
+   */
+  hasTag(name) {
+    if (this._tags.hasOwnProperty(name)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * Get the tag from its name
    * @param  {String} name the tag name
    * @return {Object}      the tag object

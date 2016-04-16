@@ -9,7 +9,8 @@ class VisitorRegistry {
 
   register(visitor) {
     const type = visitor.getType();
-    if (type !== 'robot' && type !== 'pipeline' && type != 'factory') {
+    if (type !== 'robot' && type !== 'pipeline'
+      && type != 'factory' && type !== 'transport') {
       console.warn(`Unknow visitor type: ${type}`);
       return;
     }

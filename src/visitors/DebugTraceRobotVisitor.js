@@ -13,7 +13,7 @@ var DebugTraceRobotVisitor = createVisitor({
 
   enter(robot, box, ctx) {
     const utils = require('../utils');
-    utils.printRobot(robot.model, box);
+    utils.printRobot(robot, box);
     ctx.startTime = process.hrtime();
   },
 
@@ -27,7 +27,7 @@ var DebugTraceRobotVisitor = createVisitor({
       utils.printBox(box, {prefix: '|=send Box:'});
     }
     if (box.getTag(Constants.tags.DEBUG)) {
-      console.log(`>>time elapsed:${diff[0] * 1000 + diff[1] / 1000000} ms<<`);
+      console.log(`|    >>time elapsed:${diff[0] * 1000 + diff[1] / 1000000} ms<<`);
     }
   }
 });

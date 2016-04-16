@@ -6,8 +6,9 @@ var defaultWorker = {
 
 module.exports = (delegate) => {
   const ReserverdFunctions = ['setDelegate', 'process'];
-  let createError = require('./utils').createError;
-  let Constants = require('./Constants');
+  const createError = require('./utils').createError;
+  const Constants = require('./Constants');
+  const Sequence = require('./Sequence');
 
   if (!delegate) {
     delegate = defaultWorker;
@@ -15,9 +16,10 @@ module.exports = (delegate) => {
 
   class Robot {
     constructor(options = {}) {
-      this.model = "Unknown Model";
-      this.options = options;
-      this.sync = false;
+      this.id = Sequence.newName(); // robot id
+      this.model = "Unknown Model"; // robot model
+      this.options = options; // robot options
+      this.sync = false;  // robot working mode: sync or async
 
       this.setDelegate(delegate);
 
@@ -47,31 +49,56 @@ module.exports = (delegate) => {
     }
 
     process(box, done) {
-      try {
 "#if process.env.NODE_ENV !== 'production'";
-        var visitorCtx = {};
-        const i11e = require('../index');
-        var visitors = i11e.visitors.getRobotVisitors();
-        for (let visitor of visitors) {
-          visitor.enter(this, box, visitorCtx);
+      var visitorCtx = {};
+      const i11e = require('../index');
+      var visitors = i11e.visitors.getRobotVisitors();
+      for (let visitor of visitors) {
+        visitor.enter(this, box, visitorCtx);
+      }
+
+      try {
+        var ret =  this.delegate.process.call(this, box, (err, result) => {
+          if (!this.sync) {
+            // for async mode
+            for (let visitor of visitors) {
+              visitor.exit(this, err, result, visitorCtx);
+            }
+            done(err, result);
+          }
+        });
+
+        // for sync mode
+        if (this.sync) {
+          for (let visitor of visitors) {
+            visitor.exit(this, null, box, visitorCtx);
+          }
         }
 
-        return this.delegate.process.call(this, box, (err, result) => {
-          for (let visitor of visitors) {
-            visitor.exit(this, err, result, visitorCtx);
-          }
-          done(err, result);
-        });
-"#endif";
-"#if process.env.NODE_ENV === 'production'";
-        return this.delegate.process.call(this, box, done);
-"#endif";
+        return ret;
       } catch (err) {
-        if (done)
-          done(createError(500, err, box), box);
-        else
+        if (this.sync) {
+          for (let visitor of visitors) {
+            visitor.exit(this, null, box, visitorCtx);
+          }
           throw createError(500, err, box);
+        } else {
+          done(createError(500, err, box), box);
+        }
       }
+"#endif";
+
+"#if process.env.NODE_ENV === 'production'";
+      try {
+        return this.delegate.process.call(this, box, done);
+      } catch (err) {
+        if (this.sync) {
+          throw createError(500, err, box);
+        } else {
+          done(createError(500, err, box), box);
+        }
+      }
+"#endif";
     }
   }
 

@@ -12,6 +12,7 @@ const createPipeline = (delegate) => {
   var Source = require('./Source');
   var Box = require('./Box');
   const Constants = require('./Constants');
+  const Sequence = require('./Sequence');
 
   if (!delegate) {
     delegate = defaultPipeline;
@@ -26,7 +27,7 @@ const createPipeline = (delegate) => {
     push(box) {
 "#if process.env.NODE_ENV !== 'production'";
       var visitorCtx = {};
-      box.set('__VisitorCtx__', visitorCtx);
+      box.addTag(`VisitorCtx_${this.pipeline.id}`, visitorCtx);
       const i11e = require('../index');
       var visitors = i11e.visitors.getPipelineVisitors();
       for (let visitor of visitors) {
@@ -43,6 +44,7 @@ const createPipeline = (delegate) => {
 
   class Pipeline {
     constructor(options = {}) {
+      this.id = Sequence.newName();
       this.model = "Unknown Production Line";
       this.options = options;
       this.source = new SourceWrapper(this, new Source());
@@ -128,7 +130,8 @@ const createPipeline = (delegate) => {
             const i11e = require('../index');
             var visitors = i11e.visitors.getPipelineVisitors();
             for (let visitor of visitors) {
-              visitor.exit(this, null, box, box.get('__VisitorCtx__'));
+              visitor.exit(this, null, box, box.getTag(`VisitorCtx_${this.id}`));
+              box.removeTag(`VisitorCtx_${this.id}`);
             }
 "#endif";
 

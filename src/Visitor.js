@@ -12,7 +12,7 @@ var defaultVisitor = {
 
 module.exports = (delegate) => {
   const ReserverdFunctions = ['setDelegate', 'getModel', 'getType', 'enter', 'exit'];
-  
+
   if (!delegate) {
     delegate = defaultVisitor;
   }
@@ -70,6 +70,7 @@ module.exports = (delegate) => {
           this.delegate.enter.call(this, entity, box, result);
         } catch (err) {
           console.error(`Error running [enter] of visitor [${this.model}]: ${err.message}`);
+          console.error(err.stack);
         }
       }
     }
@@ -80,6 +81,7 @@ module.exports = (delegate) => {
           this.delegate.exit.call(this, entity, error, box, result);
         } catch (err) {
           console.error(`Error running [exit] of visitor [${this.model}]: ${err.message}`);
+          console.error(err.stack);
         }
       }
     }

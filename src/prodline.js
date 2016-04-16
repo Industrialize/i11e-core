@@ -113,6 +113,7 @@ _.addMethod('branch', function(...pipelines) {
 _.addMethod('debug', function(debug, debug_tag, unboxFilter) {
   var tags = {
     'debug': !!debug ? !!debug : null,
+    'debug:trace:pipeline': !!debug ? !!debug : null,
     'debug:unbox': !!debug ? !!debug : null,
     'debug:tag': !!debug_tag ? !!debug_tag : null,
     'debug:unbox:filter': !!unboxFilter ? unboxFilter : null

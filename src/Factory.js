@@ -1,10 +1,12 @@
-const Port = require('./Port');
-
-const ReserverdFunctions = ['setDelegate', 'getType', 'definePorts', 'startup', 'shutdown'];
-
 module.exports = (delegate) => {
+  const ReserverdFunctions = ['setDelegate', 'getType', 'definePorts', 'startup', 'shutdown'];
+  const Port = require('./Port');
+  const Sequence = require('./Sequence');
+
+
   class Factory {
     constructor(name, options = {}) {
+      this.id = Sequence.newName();
       this.name = name;
       this.type = null;
       this.ports = {};
@@ -24,6 +26,16 @@ module.exports = (delegate) => {
             mode: ports[i][1]
           });
           this.ports[port.name] = port;
+
+"#if process.env.NODE_ENV !== 'production'";
+          this.ports[port.name].observe({
+            name: 'traceVisitorObserver',
+            observer: (box) => {
+
+            }
+          })
+"#endif";
+
         }
       }
 

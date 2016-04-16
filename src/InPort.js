@@ -49,7 +49,7 @@ class InPort {
   }
 
   observe(observer) {
-    this.observers[observer.name] = observer;
+    this.observers[observer.name] = observer.observer;
     return this;
   }
 

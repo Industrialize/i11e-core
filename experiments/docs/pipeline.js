@@ -52,4 +52,7 @@ greetingPL._()  // get the tail of the production line
 greetingPL.$() // get the head of the production line
   .push(new Box({ // push an input box to the productoin line
     name: 'John'
+  }, {
+    'debug': true,
+    'debug:trace:pipeline': true
   }));

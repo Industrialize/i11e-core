@@ -2,9 +2,9 @@
   "name": "i11e-core",
   "version": "0.1.0",
   "description": "industrialize core",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/Industrialize/i11e-core.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Industrialize/i11e-core.git"
   },
   "scripts": {
     "clean": "rm -R lib",
@@ -32,6 +32,7 @@
     "extend": "^3.0.0",
     "isstream": "^0.1.2",
     "minimist": "^1.2.0",
+    "moniker": "^0.1.2",
     "node-cache": "^3.2.1",
     "object-path": "^0.9.2",
     "shortid": "^2.2.4",

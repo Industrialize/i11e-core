@@ -113,7 +113,7 @@ module.exports = {
     }
   },
 
-  printRobot(model, box, options = {}) {
+  printRobot(robot, box, options = {}) {
     const wildstring = require('wildstring');
     var matchName = (name, trace) => {
       var parts = trace.split(';');
@@ -126,6 +126,10 @@ module.exports = {
 
       return false;
     };
+
+    const model = robot.model;
+    const id = robot.id;
+
     const G = require('./Global');
     if (!options.glossary) options.glossary = G.glossary;
     if (!options.printBox) options.unbox = G.unbox;
@@ -133,7 +137,7 @@ module.exports = {
     if (!options.showTag) options.showTag = G.showTag;
 
     if ((G.debug && model && G.trace && matchName(model, G.trace)) || box.getTag(Constants.tags.DEBUG)) {
-      console.log(`|---> Robot: [${model}]`);
+      console.log(`|--> RBT: [${id}]-[${model}]`);
 
       if (options.unbox || box.getTag(Constants.tags.DEBUG_UNBOX)) {
         console.log('|=receive Box:');
