@@ -45,6 +45,8 @@ class Port {
     this.name = name;
     this.options = options;
 
+    this.factory = null;  // the factory, who owns this port
+
     // mode is an internal property, do NOT access it directly,
     // use getMode() and setMode() instead
     this._mode = Constants.GPIO;
@@ -54,6 +56,7 @@ class Port {
     if (this.options.hasOwnProperty('mode')) {
       this.setMode(this.options.mode);
     }
+
   }
 
   /**
@@ -135,6 +138,11 @@ class Port {
   unobserve(observerName) {
     if (this.delegate) this.delegate.unobserve(observer);
     return this;
+  }
+
+  setFactory(factory) {
+    this.factory = factory;
+    this.delegate.setFactory(factory);
   }
 
   /**

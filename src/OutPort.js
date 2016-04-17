@@ -20,7 +20,10 @@ class OutPort {
   // -------------------------------------------------------------------------------------
   // Common method for all modes
   // -------------------------------------------------------------------------------------
-
+  setFactory(factory) {
+    this.factory = factory;
+  }
+  
   connect(transport) {
     this.transports[transport.name] = transport;
     return this;
@@ -61,6 +64,15 @@ class OutPort {
     var resBox = new Box(message);
     resBox.set('_results', null); // remove the results
 
+"#if process.env.NODE_ENV !== 'production'";
+    var visitorCtx = {};
+    const i11e = require('../index');
+    var visitors = i11e.visitors.getFactoryVisitors();
+    for (let visitor of visitors) {
+      visitor.enter(this, resBox, visitorCtx);
+    }
+"#endif"
+
     // prepare the field to transport
     var transportBox = resBox;
     var transportFields = resBox.getTag(Constants.tags.TRANSPORT_FIELDS);
@@ -87,7 +99,7 @@ class OutPort {
       .nfcall([new Box(transportBox)])
       .parallel((this.transports.length > 0) ? this.transports.length : 1)
       .errors((err) => {
-        done(err);
+        //done(err);
       })
       .each((result) => {
         try {
@@ -105,6 +117,11 @@ class OutPort {
       })
       .done(() => {
         resBox.set('_results', results);  // set the results
+        "#if process.env.NODE_ENV !== 'production'";
+            for (let visitor of visitors) {
+              visitor.enter(this, null, resBox, visitorCtx);
+            }
+        "#endif"
         done(null, resBox);
       });
   }

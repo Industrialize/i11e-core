@@ -1,17 +1,19 @@
-var defaultWorker = {
+var defaultDelegate = {
+  isSync() {return false},
+  getModel() {return 'PassThroughRobot'},
   process(box, done) {
     done(null, box);
   }
 };
 
 module.exports = (delegate) => {
-  const ReserverdFunctions = ['setDelegate', 'process'];
+  const ReserverdFunctions = ['setDelegate', 'process', 'getModel', 'isSync'];
   const createError = require('./utils').createError;
   const Constants = require('./Constants');
   const Sequence = require('./Sequence');
 
   if (!delegate) {
-    delegate = defaultWorker;
+    delegate = defaultDelegate;
   }
 
   class Robot {
@@ -26,6 +28,14 @@ module.exports = (delegate) => {
       if (this.delegate.initRobot) {
         this.delegate.initRobot.call(this);
       }
+
+"#if process.env.NODE_ENV !== 'production'";
+      const i11e = require('../index');
+      var visitors = i11e.visitors.getRobotVisitors();
+      for (let visitor of visitors) {
+        visitor.create(this);
+      }
+"#endif";
     }
 
     setDelegate(delegate) {
@@ -46,6 +56,18 @@ module.exports = (delegate) => {
       }
 
       return this;
+    }
+
+    getId() {
+      return this.id;
+    }
+
+    getModel() {
+      return this.model;
+    }
+
+    isSync() {
+      return this.sync;
     }
 
     process(box, done) {

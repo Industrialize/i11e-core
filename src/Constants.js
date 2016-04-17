@@ -17,6 +17,7 @@ module.exports = {
     DEBUG_UNBOX: 'debug:unbox',
     DEBUG_RESERVED: 'debug:reserved',
     DEBUG_UNBOX_FILER: 'debug:unbox:filter',
-    DEBUG_TRACE_PIPELINE: 'debug:trace:pipeline'
+    DEBUG_TRACE_PIPELINE: 'debug:trace:pipeline',
+    DEBUG_TRACE_FACTORY: 'debug:trace:factory'
   }
 }

@@ -50,24 +50,49 @@ module.exports = (delegate) => {
       return this.model || 'AnonymousVisitorModel'
     }
 
-    getType() {
-      if (this.delegate.getType) {
+    create(entity) {
+      if (this.delegate.create) {
         try {
-          this.type = this.delegate.getType.call(this);
+          this.delegate.create.call(this);
         } catch (err) {
-          console.error(`Error running [getType] of visitor: ${err.message}`);
+          console.error(`Error running [create] of visitor [${this.model}]: ${err.message}`);
+          console.error(err.stack);
         }
-      } else {
-        this.type = 'robot';
       }
-
-      return this.type;
     }
 
-    enter(entity, box, result) {
+    connect(entity, tbc) {
+      if (this.delegate.connect) {
+        try {
+          this.delegate.connect.call(this, entity, tbc);
+        } catch (err) {
+          console.error(`Error running [connect] of visitor [${this.model}]: ${err.message}`);
+          console.error(err.stack);
+        }
+      }
+    }
+
+    disconnect(entity, tbd) {
+      if (this.delegate.disconnect) {
+        try {
+          this.delegate.disconnect.call(this, entity, tbd);
+        } catch (err) {
+          console.error(`Error running [disconnect] of visitor [${this.model}]: ${err.message}`);
+          console.error(err.stack);
+        }
+      }
+    }
+
+    /**
+     * Called when a box enter entity
+     * @param  {Object} entity instance of Robot, Pipeline, Port, or Transport
+     * @param  {box} box    the current box
+     * @param  {Object} ctx the context used to share data with other lifecycle api
+     */
+    enter(entity, box, ctx) {
       if (this.delegate.enter) {
         try {
-          this.delegate.enter.call(this, entity, box, result);
+          this.delegate.enter.call(this, entity, box, ctx);
         } catch (err) {
           console.error(`Error running [enter] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);
@@ -75,10 +100,17 @@ module.exports = (delegate) => {
       }
     }
 
-    exit(entity, error, box, result) {
+    /**
+     * Called when a box exits entity
+     * @param  {Object} entity instance of Robot, Pipeline, Port, or Transport
+     * @param  {Error} error  the error object if any
+     * @param  {box} box    the current box
+     * @param  {Object} ctx the context used to share data with other lifecycle api
+     */
+    exit(entity, error, box, ctx) {
       if (this.delegate.exit) {
         try {
-          this.delegate.exit.call(this, entity, error, box, result);
+          this.delegate.exit.call(this, entity, error, box, ctx);
         } catch (err) {
           console.error(`Error running [exit] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);

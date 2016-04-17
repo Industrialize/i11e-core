@@ -15,7 +15,7 @@ var DebugTracePipelineVisitor = createVisitor({
     const utils = require('../utils');
     if (box.getTag(Constants.tags.DEBUG)
       && box.getTag(Constants.tags.DEBUG_TRACE_PIPELINE)) {
-      console.log(`|--> PPL: [${pipeline.id}]-[${pipeline.getModel()}]: Enter pipeline`);
+      console.log(`|--> PPL: [${pipeline.getModel()}]-[${pipeline.id}]: Enter pipeline`);
     }
     ctx.startTime = process.hrtime();
   },
@@ -24,7 +24,7 @@ var DebugTracePipelineVisitor = createVisitor({
     var diff = process.hrtime(ctx.startTime);
     if (box.getTag(Constants.tags.DEBUG)
       && box.getTag(Constants.tags.DEBUG_TRACE_PIPELINE)) {
-      console.log(`|--> PPL: [${pipeline.id}]-[${pipeline.getModel()}]: Exit pipeline`);
+      console.log(`|--> PPL: [${pipeline.getModel()}]-[${pipeline.id}]: Exit pipeline`);
     }
     if (err) {
       throw err;

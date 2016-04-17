@@ -29,6 +29,9 @@ class InPort {
   // -------------------------------------------------------------------------------------
   // Common method for all modes
   // -------------------------------------------------------------------------------------
+  setFactory(factory) {
+    this.factory = factory;
+  }
 
   connect(transport) {
     this.transports[transport.name] = transport;
@@ -68,7 +71,24 @@ class InPort {
 
   send(incomingMsg, done) {
     let box = new Box(incomingMsg);
+"#if process.env.NODE_ENV !== 'production'";
+    var visitorCtx = {};
+    const i11e = require('../index');
+    var visitors = i11e.visitors.getFactoryVisitors();
+    for (let visitor of visitors) {
+      visitor.enter(this, box, visitorCtx);
+    }
+    this.session.set(box._seq, (err, result) => {
+      for (let visitor of visitors) {
+        visitor.exit(this, err, result, visitorCtx);
+      }
+      done(err, result);
+    });
+"#endif"
+
+"#if process.env.NODE_ENV === 'production'";
     this.session.set(box._seq, done);
+"#endif"
     this.incomingStream.push(box);
   }
 

@@ -8,7 +8,7 @@ module.exports = (delegate) => {
     constructor(name, options = {}) {
       this.id = Sequence.newName();
       this.name = name;
-      this.type = null;
+      this.type = "Unknown Factory Type";
       this.ports = {};
       this.options = options;
 
@@ -25,17 +25,8 @@ module.exports = (delegate) => {
           let port = new Port(ports[i][0], {
             mode: ports[i][1]
           });
+          port.setFactory(this);
           this.ports[port.name] = port;
-
-"#if process.env.NODE_ENV !== 'production'";
-          this.ports[port.name].observe({
-            name: 'traceVisitorObserver',
-            observer: (box) => {
-
-            }
-          })
-"#endif";
-
         }
       }
 
@@ -57,6 +48,10 @@ module.exports = (delegate) => {
 
     getName() {
       return this.name;
+    }
+
+    getType() {
+      return this.type;
     }
 
     getPorts(name) {

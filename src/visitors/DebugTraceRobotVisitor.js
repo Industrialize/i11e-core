@@ -3,29 +3,25 @@ const utils = require('../utils');
 const Constants = require('../Constants');
 
 var DebugTraceRobotVisitor = createVisitor({
-  getType() {
-    return 'robot';
-  },
-
   getModel() {
     return "DebugTraceRobotVisitor";
   },
 
   enter(robot, box, ctx) {
     const utils = require('../utils');
-    utils.printRobot(robot, box);
+    //utils.printRobot(robot, box);
+    const model = robot.model;
+    const id = robot.id;
+    console.log(`|--> RBT: [${model}]-[${id}]: Enter Robot`);
     ctx.startTime = process.hrtime();
   },
 
   exit(robot, err, box, ctx) {
     var diff = process.hrtime(ctx.startTime);
-    if (err) {
-      utils.printBox(box, {prefix: '|=send Box:'});
+    const model = robot.model;
+    const id = robot.id;
+    console.log(`|--> RBT: [${model}]-[${id}]: Exit Robot`);
 
-      throw err;
-    } else {
-      utils.printBox(box, {prefix: '|=send Box:'});
-    }
     if (box.getTag(Constants.tags.DEBUG)) {
       console.log(`|    >>time elapsed:${diff[0] * 1000 + diff[1] / 1000000} ms<<`);
     }

@@ -137,7 +137,7 @@ module.exports = {
     if (!options.showTag) options.showTag = G.showTag;
 
     if ((G.debug && model && G.trace && matchName(model, G.trace)) || box.getTag(Constants.tags.DEBUG)) {
-      console.log(`|--> RBT: [${id}]-[${model}]`);
+      console.log(`|--> RBT: [${model}]-[${id}]`);
 
       if (options.unbox || box.getTag(Constants.tags.DEBUG_UNBOX)) {
         console.log('|=receive Box:');

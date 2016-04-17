@@ -44,6 +44,10 @@ var GreetingFactory = i11e.createFactory({
     ]
   },
 
+  getType() {
+    return 'GreetingFactory';
+  },
+
   // start the factory, put your init code here, usually you construct the production
   // line here
   startup(signal) {
@@ -90,6 +94,10 @@ greetingFactory.startup();
 // now you can send box to the REQ_IN port and receive result at the callback
 greetingFactory.getPorts('REQ_IN').send(new Box({
   name: 'John'
+}, {
+  'debug': true,
+  'debug:trace:pipeline': true,
+  'debug:trace:factory': true
 }), (err, resultBox) => {
   console.log(resultBox.get('greeting'));
 });

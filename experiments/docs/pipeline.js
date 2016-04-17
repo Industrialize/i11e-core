@@ -1,5 +1,8 @@
 const i11e = require('../../index');
+const i11eDebug = require('../../../i11e-debug');
 const Box = i11e.Box;
+
+i11e.extend(i11eDebug);
 
 // create a pipeline
 var GreetingPipeline = i11e.createPipeline({

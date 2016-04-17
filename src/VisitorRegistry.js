@@ -3,12 +3,12 @@ class VisitorRegistry {
     this.registry = {
       robot: [],
       pipeline: [],
-      factory: []
+      factory: [],
+      transport: []
     };
   }
 
-  register(visitor) {
-    const type = visitor.getType();
+  register(type, visitor) {
     if (type !== 'robot' && type !== 'pipeline'
       && type != 'factory' && type !== 'transport') {
       console.warn(`Unknow visitor type: ${type}`);
@@ -27,6 +27,10 @@ class VisitorRegistry {
 
   getFactoryVisitors() {
     return this.registry.factory;
+  }
+
+  getTransportVisitors() {
+    return this.registry.transport;
   }
 }
 
