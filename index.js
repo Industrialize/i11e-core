@@ -59,7 +59,7 @@ exports.registerSugar = (name, Robot, optionHandler) => {
   var prodline = require('./lib/prodline');
   prodline.addMethod(name, function(options) {
     try {
-      if (optionsHandler) opt = optionsHandler(options);
+      if (optionHandler) opt = optionHandler(options);
       return this.robot(Robot(opt ? opt : options));
     } catch (err) {
       var createError = require('./lib/utils').createError;

@@ -78,6 +78,10 @@ const createPipeline = (delegate) => {
       return this;
     }
 
+    getId() {
+      return this.id;
+    }
+
     getModel() {
       return this.model;
     }

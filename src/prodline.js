@@ -109,37 +109,37 @@ _.addMethod('branch', function(...pipelines) {
 // -----------------------------------------------------------------------------
 // Useful tool in prodline, which is not implemented as a robot
 // -----------------------------------------------------------------------------
-"#if process.env.NODE_ENV !== 'production'";
-_.addMethod('debug', function(debug, debug_tag, unboxFilter) {
-  var tags = {
-    'debug': !!debug ? !!debug : null,
-    'debug:trace:pipeline': !!debug ? !!debug : null,
-    'debug:unbox': !!debug ? !!debug : null,
-    'debug:tag': !!debug_tag ? !!debug_tag : null,
-    'debug:unbox:filter': !!unboxFilter ? unboxFilter : null
-  };
-
-  // do not use tag robot here, otherwise it will print the tag robot info
-  return this.map((box) => {
-    for (var key in tags) {
-      if (tags.hasOwnProperty(key)) {
-        if (tags[key] == null) {
-          box.removeTag(key);
-        } else {
-          box.addTag(key, tags[key])
-        }
-      }
-    }
-    return box;
-  });
-});
-"#endif"
-
-"#if process.env.NODE_ENV === 'production'";
-_.addMethod('debug', function(debug) {
-  return this.doto(() => {});
-});
-"#endif"
+// "#if process.env.NODE_ENV !== 'production'";
+// _.addMethod('debug', function(debug, debug_tag, unboxFilter) {
+//   var tags = {
+//     'debug': !!debug ? !!debug : null,
+//     'debug:trace:pipeline': !!debug ? !!debug : null,
+//     'debug:unbox': !!debug ? !!debug : null,
+//     'debug:tag': !!debug_tag ? !!debug_tag : null,
+//     'debug:unbox:filter': !!unboxFilter ? unboxFilter : null
+//   };
+//
+//   // do not use tag robot here, otherwise it will print the tag robot info
+//   return this.map((box) => {
+//     for (var key in tags) {
+//       if (tags.hasOwnProperty(key)) {
+//         if (tags[key] == null) {
+//           box.removeTag(key);
+//         } else {
+//           box.addTag(key, tags[key])
+//         }
+//       }
+//     }
+//     return box;
+//   });
+// });
+// "#endif"
+//
+// "#if process.env.NODE_ENV === 'production'";
+// _.addMethod('debug', function(debug) {
+//   return this.doto(() => {});
+// });
+// "#endif"
 
 _.addMethod('accept', function(properties) {
   if (!properties) {

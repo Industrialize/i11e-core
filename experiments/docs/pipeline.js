@@ -17,6 +17,7 @@ var GreetingPipeline = i11e.createPipeline({
   // process method returns the production line
   process() {
     return this.source._()
+      .debug()
       .gp((box, done) => {
         // get the name from current box
         var name = box.get('name') || 'Guest';
@@ -57,5 +58,5 @@ greetingPL.$() // get the head of the production line
     name: 'John'
   }, {
     'debug': true,
-    'debug:trace:pipeline': true
+    //'debug:trace:pipeline': true
   }));
