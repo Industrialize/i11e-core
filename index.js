@@ -28,10 +28,7 @@ exports.Source = require('./lib/Source');
 // -----------------------------------------------------------------------------
 
 exports.extend = (extension) => {
-  extension.extend({
-    registerSugar: exports.registerSugar,
-    registerVisitor: exports.registerVisitor
-  });
+  extension.extend(exports);
 }
 
 // visitor registry
@@ -57,10 +54,14 @@ exports.registerVisitor = (type, visitor) => {
  */
 exports.registerSugar = (name, Robot, optionHandler) => {
   var prodline = require('./lib/prodline');
-  prodline.addMethod(name, function(options) {
+  prodline.addMethod(name, function(...args) {
     try {
-      if (optionHandler) opt = optionHandler(options);
-      return this.robot(Robot(opt ? opt : options));
+      if (optionHandler) {
+        var opt = optionHandler.apply(this, args);
+        return this.robot(Robot(opt));
+      } else {
+        return this.robot(Robot(options));
+      }
     } catch (err) {
       var createError = require('./lib/utils').createError;
       throw createError(500, err);

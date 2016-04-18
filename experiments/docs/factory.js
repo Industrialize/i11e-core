@@ -1,6 +1,8 @@
 const i11e = require('../../index');
 const Box = i11e.Box;
 
+i11e.extend(require('../../../i11e-debug'));
+
 // create a pipeline that can be used in your factory
 var GreetingPipeline = i11e.createPipeline({
   initPipeline() {
@@ -55,9 +57,11 @@ var GreetingFactory = i11e.createFactory({
 
     // REQ_IN is an input port
     this.ports.REQ_IN.in() // get production line from port REQ_IN
+      .debug()
       .checkpoint({
         'name&': 'Michael'  // box should have 'name' as string
       })
+      .debug(false)
       // redirect your production line to the greeting production line and get result from it
       .branch({
         pipeline: greetingPL,
@@ -94,10 +98,6 @@ greetingFactory.startup();
 // now you can send box to the REQ_IN port and receive result at the callback
 greetingFactory.getPorts('REQ_IN').send(new Box({
   name: 'John'
-}, {
-  'debug': true,
-  'debug:trace:pipeline': true,
-  'debug:trace:factory': true
 }), (err, resultBox) => {
   console.log(resultBox.get('greeting'));
 });

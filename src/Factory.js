@@ -50,6 +50,10 @@ module.exports = (delegate) => {
       return this.name;
     }
 
+    getId() {
+      return this.id;
+    }
+    
     getType() {
       return this.type;
     }

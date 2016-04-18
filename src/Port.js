@@ -59,6 +59,10 @@ class Port {
 
   }
 
+  getName() {
+    return this.name;
+  }
+
   /**
    * Get port mode
    * @return {String} port mode

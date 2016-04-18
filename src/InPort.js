@@ -33,6 +33,14 @@ class InPort {
     this.factory = factory;
   }
 
+  getName() {
+    return this.name;
+  }
+
+  getMode() {
+    return this.mode;
+  }
+
   connect(transport) {
     this.transports[transport.name] = transport;
     return this;
