@@ -9,6 +9,7 @@ var TagRobot = require('./robots').TagRobot;
 var GeneralRobot = require('./robots').GeneralRobot;
 var SetContentRobot = require('./robots').SetContentRobot;
 var BranchRobot = require('./robots').BranchRobot;
+var AcceptRobot = require('./robots').AcceptRobot;
 var Constants = require('./Constants');
 var createTransport = require('./Transport');
 
@@ -28,7 +29,8 @@ _.addMethod('robot', function(robot, parallel) {
         throw createError(500, err, box);
       }
     };
-    return this.map(fn);
+    return this.filter(robot.filter.bind(robot))
+      .map(fn);
   } else {
     var fn = (box, done) => {
       try {
@@ -39,7 +41,8 @@ _.addMethod('robot', function(robot, parallel) {
     };
 
     if (!parallel) parallel = 1;
-    return this.through(_.pipeline(_.map(_.wrapCallback(fn)), _.parallel(parallel)));
+    return this.filter(robot.filter.bind(robot))
+      .through(_.pipeline(_.map(_.wrapCallback(fn)), _.parallel(parallel)));
   }
 });
 
@@ -47,6 +50,10 @@ _.addMethod('robot', function(robot, parallel) {
 // -----------------------------------------------------------------------------
 // Syntax sugar for commonly used robots
 // -----------------------------------------------------------------------------
+_.addMethod('accept', function(props) {
+  return this.robot(AcceptRobot(props));
+});
+
 _.addMethod('validate', function(template) {
   return this.robot(BoxValidationRobot(template));
 });
@@ -141,26 +148,26 @@ _.addMethod('branch', function(...pipelines) {
 // });
 // "#endif"
 
-_.addMethod('accept', function(properties) {
-  if (!properties) {
-    return true;
-  }
-
-  if (typeof properties === 'function') {
-    return this.filter(properties);
-  }
-
-  return this.filter(function(box) {
-    for (var key in properties) {
-      if (properties.hasOwnProperty(key)) {
-        if (!box.get(key) || box.get(key) != properties[key]) {
-          return false;
-        }
-      }
-    }
-    return true;
-  })
-});
+// _.addMethod('accept', function(properties) {
+//   if (!properties) {
+//     return true;
+//   }
+//
+//   if (typeof properties === 'function') {
+//     return this.filter(properties);
+//   }
+//
+//   return this.filter(function(box) {
+//     for (var key in properties) {
+//       if (properties.hasOwnProperty(key)) {
+//         if (!box.get(key) || box.get(key) != properties[key]) {
+//           return false;
+//         }
+//       }
+//     }
+//     return true;
+//   })
+// });
 
 _.addMethod('return', function(inputPort) {
   return this.through(inputPort.response());

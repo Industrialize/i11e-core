@@ -9,12 +9,14 @@ class VisitorRegistry {
   }
 
   register(type, visitor) {
+"#if process.env.NODE_ENV !== 'production'";
     if (type !== 'robot' && type !== 'pipeline'
       && type != 'factory' && type !== 'transport') {
       console.warn(`Unknow visitor type: ${type}`);
       return;
     }
     this.registry[type].push(visitor);
+"#endif";
   }
 
   getRobotVisitors() {

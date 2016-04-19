@@ -2,6 +2,9 @@ const i11e = require('../../index');
 const _ = i11e.prodline;
 const Box = i11e.Box;
 
+// install debug extension first
+i11e.extend(require('../../../i11e-debug'));
+
 // create a new robot model
 const GreetingRobotModel = i11e.createRobot({
   initRobot() { // optional, init the robot
@@ -49,6 +52,7 @@ var greetingRobot = GreetingRobotModel({
 _([new Box({
   'name': 'John'
 })])  // <== this is your input
+  .accept({'name': 'John'})
 
   // deploy a GreetingRobot
   .robot(greetingRobot) // <== process the input

@@ -4,14 +4,21 @@ var defaultVisitor = {
   getType() {
     return 'robot';
   },
-  enter(entity, box, result) {
+  didCreat(entity) {
   },
-  exit(entity, box, result) {
+  willFilter(entity, box) {
+  },
+  didFilter(entity, box, isFiltered) {
+  },
+  willProcess(entity, box, result) {
+  },
+  didProcess(entity, box, result) {
   }
 }
 
 module.exports = (delegate) => {
-  const ReserverdFunctions = ['setDelegate', 'getModel', 'getType', 'enter', 'exit'];
+  const ReserverdFunctions = ['setDelegate', 'getModel', 'getType',
+    'didCreat', 'willFilter', 'didFilter', 'willProcess', 'didProcess'];
 
   if (!delegate) {
     delegate = defaultVisitor;
@@ -50,12 +57,12 @@ module.exports = (delegate) => {
       return this.model || 'AnonymousVisitorModel'
     }
 
-    create(entity) {
-      if (this.delegate.create) {
+    didCreat(entity) {
+      if (this.delegate.didCreat) {
         try {
-          this.delegate.create.call(this);
+          this.delegate.didCreat.call(this, entity);
         } catch (err) {
-          console.error(`Error running [create] of visitor [${this.model}]: ${err.message}`);
+          console.error(`Error running [didCreat] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);
         }
       }
@@ -83,18 +90,40 @@ module.exports = (delegate) => {
       }
     }
 
+    willFilter(entity, box) {
+      if (this.delegate.willFilter) {
+        try {
+          this.delegate.willFilter.call(this, entity, box);
+        } catch (err) {
+          console.error(`Error running [willFilter] of visitor [${this.model}]: ${err.message}`);
+          console.error(err.stack);
+        }
+      }
+    }
+
+    didFilter(entity, box, isFiltered) {
+      if (this.delegate.didFilter) {
+        try {
+          this.delegate.didFilter.call(this, entity, box, isFiltered);
+        } catch (err) {
+          console.error(`Error running [didFilter] of visitor [${this.model}]: ${err.message}`);
+          console.error(err.stack);
+        }
+      }
+    }
+
     /**
      * Called when a box enter entity
      * @param  {Object} entity instance of Robot, Pipeline, Port, or Transport
      * @param  {box} box    the current box
      * @param  {Object} ctx the context used to share data with other lifecycle api
      */
-    enter(entity, box, ctx) {
-      if (this.delegate.enter) {
+    willProcess(entity, box, ctx) {
+      if (this.delegate.willProcess) {
         try {
-          this.delegate.enter.call(this, entity, box, ctx);
+          this.delegate.willProcess.call(this, entity, box, ctx);
         } catch (err) {
-          console.error(`Error running [enter] of visitor [${this.model}]: ${err.message}`);
+          console.error(`Error running [willProcess] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);
         }
       }
@@ -107,12 +136,12 @@ module.exports = (delegate) => {
      * @param  {box} box    the current box
      * @param  {Object} ctx the context used to share data with other lifecycle api
      */
-    exit(entity, error, box, ctx) {
-      if (this.delegate.exit) {
+    didProcess(entity, error, box, ctx) {
+      if (this.delegate.didProcess) {
         try {
-          this.delegate.exit.call(this, entity, error, box, ctx);
+          this.delegate.didProcess.call(this, entity, error, box, ctx);
         } catch (err) {
-          console.error(`Error running [exit] of visitor [${this.model}]: ${err.message}`);
+          console.error(`Error running [didProcess] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);
         }
       }

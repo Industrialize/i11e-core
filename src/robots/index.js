@@ -1,4 +1,9 @@
 module.exports = {
+  AcceptRobot: (props) => {
+    var AcceptRobotModel = require('./AcceptRobot');
+    return new AcceptRobotModel(props);
+  },
+
   BoxValidationRobot: (template) => {
     var BoxValidationRobotModel = require('./BoxValidationRobot');
     return new BoxValidationRobotModel(template);
