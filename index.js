@@ -54,7 +54,8 @@ exports.registerVisitor = (type, visitor) => {
  */
 exports.registerSugar = (name, Robot, optionHandler) => {
   var prodline = require('./lib/prodline');
-  prodline.addMethod(name, function(...args) {
+  prodline.addMethod(name, function() {
+    var args = Array.prototype.slice.call(arguments);
     try {
       if (optionHandler) {
         var opt = optionHandler.apply(this, args);
