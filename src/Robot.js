@@ -122,10 +122,19 @@ module.exports = (delegate) => {
      */
     filter(box) {
 "#if process.env.NODE_ENV !== 'production'";
+      var filterRet = true;
+
       const i11e = require('../index');
       var visitors = i11e.visitors.getRobotVisitors();
       for (let visitor of visitors) {
-        visitor.willFilter(this, box);
+        filterRet = visitor.willFilter(this, box);
+        if (filterRet === false) {
+          return false;
+        } else if (filterRet === true) {
+          return true;
+        } else {
+          // continue
+        }
       }
 "#endif";
 
@@ -135,7 +144,14 @@ module.exports = (delegate) => {
 
 "#if process.env.NODE_ENV !== 'production'";
       for (let visitor of visitors) {
-        visitor.didFilter(this, box, passOrNot);
+        filterRet = visitor.didFilter(this, box, passOrNot);
+        if (filterRet === false) {
+          return false;
+        } else if (filterRet === true) {
+          return true;
+        } else {
+          // continue
+        }
       }
 "#endif";
       return passOrNot;
@@ -152,9 +168,23 @@ module.exports = (delegate) => {
       var visitorCtx = {};
       const i11e = require('../index');
       var visitors = i11e.visitors.getRobotVisitors();
+      var skip = false;
       for (let visitor of visitors) {
-        visitor.willProcess(this, box, visitorCtx);
+        skip = visitor.willProcess(this, box, visitorCtx);
+        if (skip) skip = true;
       }
+
+      // skip process if necessary
+      if (skip) {
+        for (let visitor of visitors) {
+          visitor.didProcess(this, null, box, visitorCtx);
+        }
+        if (this.sync) {
+          return box;
+        } else {
+          return done(null, box);
+        }
+      } // PROCESS END HERE IF SKIP === true
 
       try {
         var ret =  this.delegate.process.call(this, box, (err, result) => {

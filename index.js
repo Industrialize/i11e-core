@@ -23,6 +23,8 @@ exports.Port = require('./lib/Port');
 // Source class
 exports.Source = require('./lib/Source');
 
+exports.Seq = require('./lib/Sequence');
+
 // -----------------------------------------------------------------------------
 // extensions
 // -----------------------------------------------------------------------------

@@ -93,7 +93,7 @@ module.exports = (delegate) => {
     willFilter(entity, box) {
       if (this.delegate.willFilter) {
         try {
-          this.delegate.willFilter.call(this, entity, box);
+          return this.delegate.willFilter.call(this, entity, box);
         } catch (err) {
           console.error(`Error running [willFilter] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);
@@ -104,7 +104,7 @@ module.exports = (delegate) => {
     didFilter(entity, box, isFiltered) {
       if (this.delegate.didFilter) {
         try {
-          this.delegate.didFilter.call(this, entity, box, isFiltered);
+          return this.delegate.didFilter.call(this, entity, box, isFiltered);
         } catch (err) {
           console.error(`Error running [didFilter] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);
@@ -121,7 +121,7 @@ module.exports = (delegate) => {
     willProcess(entity, box, ctx) {
       if (this.delegate.willProcess) {
         try {
-          this.delegate.willProcess.call(this, entity, box, ctx);
+          return this.delegate.willProcess.call(this, entity, box, ctx);
         } catch (err) {
           console.error(`Error running [willProcess] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);
@@ -139,7 +139,7 @@ module.exports = (delegate) => {
     didProcess(entity, error, box, ctx) {
       if (this.delegate.didProcess) {
         try {
-          this.delegate.didProcess.call(this, entity, error, box, ctx);
+          return this.delegate.didProcess.call(this, entity, error, box, ctx);
         } catch (err) {
           console.error(`Error running [didProcess] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);

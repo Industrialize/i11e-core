@@ -11,7 +11,7 @@ module.exports = {
     TRANSPORT_FIELDS: 'transport:fields',  // which fields to transport
     NOTIFY: 'notify',
     GLOSSARY: 'glossary',
-    
+
     DEV_TOPOLIGY: 'dev:topology',
 
     DEBUG: 'debug',

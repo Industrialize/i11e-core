@@ -1,7 +1,7 @@
 const i11e = require('../../index');
 const Box = i11e.Box;
 
-i11e.extend(require('../../../i11e-debug'));
+//i11e.extend(require('../../../i11e-debug'));
 
 // create a pipeline that can be used in your factory
 var GreetingPipeline = i11e.createPipeline({
@@ -16,6 +16,10 @@ var GreetingPipeline = i11e.createPipeline({
   // process method returns the production line
   process() {
     return this.source._()
+      .accept({$cmd: 'greeting'})
+      .doto((box) => {
+        // console.log('Greeting PPL:', JSON.stringify(box._tags, null, 2));
+      })
       .gp((box, done) => {
         // get the name from current box
         var name = box.get('name') || 'Guest';
@@ -57,11 +61,13 @@ var GreetingFactory = i11e.createFactory({
 
     // REQ_IN is an input port
     this.ports.REQ_IN.in() // get production line from port REQ_IN
-      .debug()
+      .testSTART()
+      .accept({$cmd: 'greeting'})
+      // .debug()
       .checkpoint({
         'name&': 'Michael'  // box should have 'name' as string
       })
-      .debug(false)
+      // .debug(false)
       // redirect your production line to the greeting production line and get result from it
       .branch({
         pipeline: greetingPL,
@@ -71,6 +77,7 @@ var GreetingFactory = i11e.createFactory({
         'name&': 'Michael',
         'greeting!': 'Hello World! Michael' // greeting MUST NOT be null
       })
+      .testEND()
       .errors((err) => {  // print the error if there is any during production process
         console.error(err.message);
       })
@@ -95,9 +102,20 @@ var greetingFactory = GreetingFactory('greetingFactory', {
 // start it
 greetingFactory.startup();
 
+const TopologyVisitor = require('../../lib/visitors/TopologyVisitor');
+i11e.registerVisitor('robot', TopologyVisitor());
+
 // now you can send box to the REQ_IN port and receive result at the callback
 greetingFactory.getPorts('REQ_IN').send(new Box({
+  $cmd: 'greeting',
   name: 'John'
 }), (err, resultBox) => {
+  const fs = require('fs');
+  const path = require('path');
+  const content = "var visualdata = " + JSON.stringify(resultBox.getTag('dev:topology:robot'), null, 2);
+  fs.writeFile(path.join(__dirname, '../visual/data-tmp.js'), content, function(err) {
+    if (err)
+      console.error(err.message);
+  });
   console.log(resultBox.get('greeting'));
 });

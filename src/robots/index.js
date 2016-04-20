@@ -27,5 +27,15 @@ module.exports = {
   BranchRobot: (fn) => {
     var BranchRobotModel = require('./BranchRobot');
     return new BranchRobotModel(fn);
+  },
+
+  ProbeRobot: (options) => {
+    var ProbeRobotModel = require('./ProbeRobot');
+    return new ProbeRobotModel(options);
+  },
+
+  FileWriteRobot: (file) => {
+    var FileWriteRobotModel = require('./FileWriteRobot');
+    return new FileWriteRobotModel(file);
   }
 }

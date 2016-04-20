@@ -9,6 +9,7 @@ var TagRobot = require('./robots').TagRobot;
 var GeneralRobot = require('./robots').GeneralRobot;
 var SetContentRobot = require('./robots').SetContentRobot;
 var BranchRobot = require('./robots').BranchRobot;
+var ProbeRobot = require('./robots').ProbeRobot;
 var AcceptRobot = require('./robots').AcceptRobot;
 var Constants = require('./Constants');
 var createTransport = require('./Transport');
@@ -111,6 +112,18 @@ _.addMethod('branch', function(...pipelines) {
     ret = ret.robot(BranchRobot(pipeline));
   }
   return ret;
+});
+
+_.addMethod('probe', function(options) {
+  return this.robot(ProbeRobot(options));
+});
+
+_.addMethod('testSTART', function() {
+  return this.robot(ProbeRobot('testSTART'));
+});
+
+_.addMethod('testEND', function() {
+  return this.robot(ProbeRobot('testEND'));
 });
 
 // -----------------------------------------------------------------------------

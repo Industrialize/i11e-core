@@ -48,11 +48,12 @@ module.exports = createRobotModel({
 
           // update _results
           results.push(box);
-          originalBox.set('_results', results);
 
           // return merged original box
           if (!done) throw createError(400, 'Must have a "done" method');
           let merged = originalBox.merge(box);
+
+          merged.set('_results', results);
           done(null, merged);
         })
         .errors((err) => {

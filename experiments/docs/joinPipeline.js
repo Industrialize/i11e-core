@@ -68,7 +68,21 @@ i11e.join(greetingPL, printPL, {
 
 // run the two pipelines
 greetingPL._().drive();
-printPL._().drive();
+printPL._()
+.doto((box) => {   // <== handle result here
+  // console.log(box.get('greeting'));
+  const fs = require('fs');
+  const path = require('path');
+  const content = "var visualdata = " + JSON.stringify(box.getTag('dev:topology:robot'), null, 2);
+  fs.writeFile(path.join(__dirname, '../visual/data-tmp.js'), content, function(err) {
+    if (err)
+      console.error(err.message);
+  });
+}).drive();
+
+
+const TopologyVisitor = require('../../lib/visitors/TopologyVisitor');
+i11e.registerVisitor('robot', TopologyVisitor());
 
 // send input box
 greetingPL.$().push(new Box({
@@ -77,5 +91,6 @@ greetingPL.$().push(new Box({
 {
   "glossary": {
     "name": "nom"   // glossary
-  }
+  },
+  'dev:topology:enabled': true
 }));

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>I11e Robot Graph</title>
+  <style>
+    #cy {
+      width: 1200px;
+      height: 800px;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cy"></div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.6.8/cytoscape.js"></script>
+<script src="./data-tmp.js"></script>
+<script>
+  var cy = cytoscape({
+
+    container: document.getElementById('cy'), // container to render in
+
+    elements: visualdata,
+
+    style: [ // the stylesheet for the graph
+      {
+        selector: 'node',
+        style: {
+          'background-color': '#666',
+          'label': 'data(model)'
+        }
+      },
+
+      {
+        selector: 'edge',
+        style: {
+          'width': 3,
+          'line-color': '#ccc',
+          'target-arrow-color': '#ccc',
+          'target-arrow-shape': 'triangle'
+        }
+      },
+
+      {
+        selector: 'node[id="testSTART"]',
+        style: {
+          'background-color': '#F00'
+        }
+      },
+
+      {
+        selector: 'node[id="testEND"]',
+        style: {
+          'background-color': '#00F'
+        }
+      }
+
+    ],
+
+    layout: {
+      name: 'cose',
+      //rows: 1
+    }
+
+  });
+</script>
+
+</html>
