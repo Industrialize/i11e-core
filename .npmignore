@@ -9,3 +9,5 @@ node_modules
 /assets/
 /prototype/
 /dist/
+webpack.config.js
+README.md

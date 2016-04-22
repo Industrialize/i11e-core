@@ -12,87 +12,87 @@ var visualdata = [
   },
   {
     "data": {
-      "id": "gratis-effect",
+      "id": "successful-bed",
       "model": "AcceptRobot"
     }
   },
   {
     "data": {
-      "id": "painful-slip",
+      "id": "seemly-maid",
       "source": "testSTART",
-      "target": "gratis-effect"
+      "target": "successful-bed"
     }
   },
   {
     "data": {
-      "id": "next-action",
+      "id": "vague-answer",
       "model": "BoxValidationRobot"
     }
   },
   {
     "data": {
-      "id": "high-pitched-table",
-      "source": "gratis-effect",
-      "target": "next-action"
+      "id": "frightening-mist",
+      "source": "successful-bed",
+      "target": "vague-answer"
     }
   },
   {
     "data": {
-      "id": "incompetent-stick",
+      "id": "heavenly-relation",
       "model": "BranchRobot"
     }
   },
   {
     "data": {
-      "id": "ad-print",
-      "source": "next-action",
-      "target": "incompetent-stick"
+      "id": "nondescript-garden",
+      "source": "vague-answer",
+      "target": "heavenly-relation"
     }
   },
   {
     "data": {
-      "id": "aloof-sack",
+      "id": "swift-coal",
       "model": "AcceptRobot"
     }
   },
   {
     "data": {
-      "id": "handsome-branch",
-      "source": "incompetent-stick",
-      "target": "aloof-sack"
+      "id": "valuable-downtown",
+      "source": "heavenly-relation",
+      "target": "swift-coal"
     }
   },
   {
     "data": {
-      "id": "taboo-chairs",
+      "id": "nonchalant-spring",
       "model": "GeneralPurposeRobot"
     }
   },
   {
     "data": {
-      "id": "busy-bell",
-      "source": "aloof-sack",
-      "target": "taboo-chairs"
+      "id": "lacking-berry",
+      "source": "swift-coal",
+      "target": "nonchalant-spring"
     }
   },
   {
     "data": {
-      "id": "grandiose-river",
-      "source": "taboo-chairs",
-      "target": "incompetent-stick"
+      "id": "awful-shape",
+      "source": "nonchalant-spring",
+      "target": "heavenly-relation"
     }
   },
   {
     "data": {
-      "id": "dazzling-juice",
+      "id": "small-beginner",
       "model": "BoxValidationRobot"
     }
   },
   {
     "data": {
-      "id": "anxious-driving",
-      "source": "incompetent-stick",
-      "target": "dazzling-juice"
+      "id": "voracious-digestion",
+      "source": "heavenly-relation",
+      "target": "small-beginner"
     }
   },
   {
@@ -108,8 +108,8 @@ var visualdata = [
   },
   {
     "data": {
-      "id": "robust-slope",
-      "source": "dazzling-juice",
+      "id": "bumpy-honey",
+      "source": "small-beginner",
       "target": "testEND"
     }
   }

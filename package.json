@@ -14,7 +14,7 @@
   },
   "main": "index.js",
   "keywords": [
-    "industrialize"
+    "industrialize", "i11e"
   ],
   "author": "Bo HOU <daily.bhou@gmail.com>",
   "devDependencies": {
