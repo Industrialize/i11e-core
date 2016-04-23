@@ -30,7 +30,8 @@ exports.Seq = require('./lib/Sequence');
 // -----------------------------------------------------------------------------
 
 exports.extend = (extension) => {
-  extension.extend(exports);
+  extension.setCallback(exports.registerSugar, exports.registerVisitor);
+  extension.extend();
 }
 
 // visitor registry
@@ -111,6 +112,13 @@ exports.createVisitor = (delegate) => {
   return (options) => {
     var Visitor = require('./lib/Visitor')(delegate);
     return new Visitor(options);
+  }
+};
+
+exports.createExtension = (delegate) => {
+  return (options) => {
+    var Extension = require('./lib/Extension')(delegate);
+    return new Extension(options);
   }
 };
 
