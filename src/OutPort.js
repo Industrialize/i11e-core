@@ -77,7 +77,7 @@ class OutPort {
     const i11e = require('../index');
     var visitors = i11e.visitors.getFactoryVisitors();
     for (let visitor of visitors) {
-      visitor.enter(this, resBox, visitorCtx);
+      visitor.willProcess(this, resBox, visitorCtx);
     }
 "#endif"
 
@@ -125,11 +125,11 @@ class OutPort {
       })
       .done(() => {
         resBox.set('_results', results);  // set the results
-        "#if process.env.NODE_ENV !== 'production'";
-            for (let visitor of visitors) {
-              visitor.enter(this, null, resBox, visitorCtx);
-            }
-        "#endif"
+"#if process.env.NODE_ENV !== 'production'";
+        for (let visitor of visitors) {
+          visitor.didProcess(this, null, resBox, visitorCtx);
+        }
+"#endif"
         done(null, resBox);
       });
   }

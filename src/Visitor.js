@@ -8,11 +8,11 @@ var defaultVisitor = {
   },
   willFilter(entity, box) {
   },
-  didFilter(entity, box, isFiltered) {
+  didFilter(entity, box, passOrNot) {
   },
-  willProcess(entity, box, result) {
+  willProcess(entity, box, ctx) {
   },
-  didProcess(entity, box, result) {
+  didProcess(entity, err, box, ctx) {
   }
 }
 

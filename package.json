@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://github.com/Industrialize/i11e-core.git"
   },
+  "bin": {
+    "robot": "bin/robot.js"
+  },
   "scripts": {
     "clean": "rm -R lib",
     "test": "nodeunit test & nodeunit test/examples & nodeunit test/robots",

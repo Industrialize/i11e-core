@@ -84,11 +84,11 @@ class InPort {
     const i11e = require('../index');
     var visitors = i11e.visitors.getFactoryVisitors();
     for (let visitor of visitors) {
-      visitor.enter(this, box, visitorCtx);
+      visitor.willProcess(this, box, visitorCtx);
     }
     this.session.set(box._seq, (err, result) => {
       for (let visitor of visitors) {
-        visitor.exit(this, err, result, visitorCtx);
+        visitor.didProcess(this, err, result, visitorCtx);
       }
       done(err, result);
     });
