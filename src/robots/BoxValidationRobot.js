@@ -64,27 +64,39 @@ module.exports = createRobotModel({
   },
 
   parseKey(key) {
-    var op = key.charAt(key.length - 1);
+    var parts = key.split(':');
+    if (parts.length == 1) {
+      return [
+        {
+          key: key,
+          op: '='
+        }
+      ]
+    }
 
-    if (op != '!' // not null
-      && op != '=' // equal
-      && op != '#' // deep equal, recuisively check the children
-      && op != '&' // check type
-      && op != '-' // do not check
-      && op != '^') { // must be null or undefined
+    var ops = parts.splice(-1, 1);
+    var field = parts.join(':');
+    var ret = [];
+    for (var i = 0; i < ops.length; i++) {
+      var op = ops.charAt(i);
 
-      return {
-        key: key,
-        op: '=' // default operator
+      if (op != '!' // not null
+        && op != '=' // equal
+        && op != '#' // deep equal, recuisively check the children
+        && op != '&' // check type
+        && op != '-' // do not check
+        && op != '^') { // must be null or undefined
+
+        op = '=';
       }
+
+      ret.push({
+        key: field,
+        op: op
+      })
     }
 
-    var field = key.substring(0, key.length - 1);
-
-    return {
-      key: field,
-      op: op
-    }
+    return ret;
   },
 
   check(box, template, rootPath) {
@@ -92,67 +104,70 @@ module.exports = createRobotModel({
 
     for (let key in template) {
       if (template.hasOwnProperty(key)) {
-        let parsedKey = this.parseKey(key);
-
+        let parsedKeys = this.parseKey(key);
         currentPath = rootPath.slice();
-        currentPath.push(parsedKey.key);
+        currentPath.push(parsedKeys[0].key);
+        for (let parsedKey of parsedKeys) {
+          switch (parsedKey.op) {
+            case '-': // do not check, skip
+              break;
 
-        switch (parsedKey.op) {
-          case '-': // do not check, skip
-            break;
+            case '?': // optional
+              break;
 
-          case '^':
-            if (box.get(currentPath)) {
-              throw new Error('Data path "' + currentPath.join('.') + 'MUST be null or undefined');
-            }
-            break;
-
-          case '&':
-            if (typeof template[key] != typeof box.get(currentPath)) {
-              throw new Error('Expect type of "' + currentPath.join('.') + '" as [' + (typeof template[key]) +
-                '], but got [' + (typeof box.get(currentPath)) + ']');
-            }
-            break;
-
-          case '!':
-            if (box.get(currentPath) == null || box.get(currentPath) == undefined ) {
-              throw new Error('Expect "' + currentPath.join('.') + '" not null, but got ', box.get(currentPath));
-            }
-            break;
-
-          case '#':
-            var newRootPath = rootPath.slice();
-            newRootPath.push(parsedKey.key);
-
-            if (typeof template[key] == 'object') {
-              this.check(box, template[key], newRootPath);
-            } else if (typeof template[key] == 'function') {
-              let fn = template[key];
-              if (!fn(box, box.get(currentPath))) {
-                throw new Error(`Failed to check path:${currentPath.join('.')}`);
+            case '^': // must be null
+              if (box.get(currentPath)) {
+                throw new Error('Data path "' + currentPath.join('.') + 'MUST be null or undefined');
               }
-            } else {
-              throw new Error('Expect "' + currentPath.join('.') + '" to be an object');
-            }
-            break;
-          default: // equal =
-            if (typeof template[key] === 'object') {
+              break;
+
+            case '&': // type check
+              if (typeof template[key] != typeof box.get(currentPath)) {
+                throw new Error('Expect type of "' + currentPath.join('.') + '" as [' + (typeof template[key]) +
+                  '], but got [' + (typeof box.get(currentPath)) + ']');
+              }
+              break;
+
+            case '!': // not null
+              if (box.get(currentPath) == null || box.get(currentPath) == undefined ) {
+                throw new Error('Expect "' + currentPath.join('.') + '" not null, but got ', box.get(currentPath));
+              }
+              break;
+
+            case '#': // deep equal
               var newRootPath = rootPath.slice();
               newRootPath.push(parsedKey.key);
-              this.check(box, template[key], newRootPath);
-            } else if (typeof template[key] === 'function') {
-              let fn = template[key];
-              if (!fn(box, box.get(currentPath))) {
-                throw new Error(`Failed to check path:${currentPath.join('.')}`);
-              }
-            } else {
-              if (template[key] != box.get(currentPath)) {
-                throw new Error('Expect "' + currentPath.join('.') + '" as [' + template[key] +
-                  '], but got [' + box.get(currentPath) + ']');
-              }
-            }
 
-            break;
+              if (typeof template[key] == 'object') {
+                this.check(box, template[key], newRootPath);
+              } else if (typeof template[key] == 'function') {
+                let fn = template[key];
+                if (!fn(box, box.get(currentPath))) {
+                  throw new Error(`Failed to check path:${currentPath.join('.')}`);
+                }
+              } else {
+                throw new Error('Expect "' + currentPath.join('.') + '" to be an object');
+              }
+              break;
+            default: // equal =
+              if (typeof template[key] === 'object') {
+                var newRootPath = rootPath.slice();
+                newRootPath.push(parsedKey.key);
+                this.check(box, template[key], newRootPath);
+              } else if (typeof template[key] === 'function') {
+                let fn = template[key];
+                if (!fn(box, box.get(currentPath))) {
+                  throw new Error(`Failed to check path:${currentPath.join('.')}`);
+                }
+              } else {
+                if (template[key] != box.get(currentPath)) {
+                  throw new Error('Expect "' + currentPath.join('.') + '" as [' + template[key] +
+                    '], but got [' + box.get(currentPath) + ']');
+                }
+              }
+
+              break;
+          }
         }
       }
     }

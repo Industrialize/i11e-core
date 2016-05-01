@@ -19,7 +19,7 @@ var defaultDelegate = {
  * @return {Function}          a new robot creater function
  */
 module.exports = (delegate) => {
-  const ReserverdFunctions = ['setDelegate', 'filter', 'process', 'examples', 'getId', 'getModel', 'isSync'];
+  const ReserverdFunctions = ['setDelegate', 'filter', 'input', 'output', 'process', 'examples', 'getId', 'getModel', 'isSync'];
   const createError = require('./utils').createError;
   const Constants = require('./Constants');
   const Sequence = require('./Sequence');
@@ -113,6 +113,16 @@ module.exports = (delegate) => {
      */
     isSync() {
       return this.sync;
+    }
+
+    input() {
+      if (this.delegate.input) return this.delegate.input();
+      return null;
+    }
+
+    output() {
+      if (this.delegate.output) return this.delegate.output();
+      return null;
     }
 
     /**

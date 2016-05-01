@@ -78,12 +78,8 @@ exports.registerSugar = (name, Robot, optionHandler) => {
 // -----------------------------------------------------------------------------
 
 // create a new Robot Model
-exports.createRobot = (delegate) => {
-  return (options) => {
-    var Robot = require('./lib/Robot')(delegate);
-    return new Robot(options);
-  }
-};
+exports.createRobot = require('./lib/Robot');
+
 
 // create a new Pipeline Model
 exports.createPipeline =  (delegate) => {
