@@ -18,7 +18,7 @@ var defaultVisitor = {
 
 module.exports = (delegate) => {
   const ReserverdFunctions = ['setDelegate', 'getModel', 'getType',
-    'didCreat', 'willFilter', 'didFilter', 'willProcess', 'didProcess'];
+    'didCreate', 'willFilter', 'didFilter', 'willProcess', 'didProcess'];
 
   if (!delegate) {
     delegate = defaultVisitor;
@@ -57,12 +57,12 @@ module.exports = (delegate) => {
       return this.model || 'AnonymousVisitorModel'
     }
 
-    didCreat(entity) {
-      if (this.delegate.didCreat) {
+    didCreate(entity) {
+      if (this.delegate.didCreate) {
         try {
-          this.delegate.didCreat.call(this, entity);
+          this.delegate.didCreate.call(this, entity);
         } catch (err) {
-          console.error(`Error running [didCreat] of visitor [${this.model}]: ${err.message}`);
+          console.error(`Error running [didCreate] of visitor [${this.model}]: ${err.message}`);
           console.error(err.stack);
         }
       }

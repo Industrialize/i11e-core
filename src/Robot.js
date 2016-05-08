@@ -41,7 +41,7 @@ module.exports = (delegate) => {
       this.id = Sequence.newName(); // robot id
       this.model = "Unknown Model"; // robot model
       this.options = options; // robot options
-      this.sync = false;  // robot working mode: sync or async
+      this.sync = false;  // robot working mode: sync or async, default async
 
       this.setDelegate(delegate);
 
@@ -53,7 +53,7 @@ module.exports = (delegate) => {
       const i11e = require('../index');
       var visitors = i11e.visitors.getRobotVisitors();
       for (let visitor of visitors) {
-        visitor.didCreat(this);
+        visitor.didCreate(this);
       }
 "#endif";
     }
@@ -113,16 +113,6 @@ module.exports = (delegate) => {
      */
     isSync() {
       return this.sync;
-    }
-
-    input() {
-      if (this.delegate.input) return this.delegate.input();
-      return null;
-    }
-
-    output() {
-      if (this.delegate.output) return this.delegate.output();
-      return null;
     }
 
     /**
@@ -240,6 +230,28 @@ module.exports = (delegate) => {
 "#endif";
     }
 
+    /**
+     * Input descriptor/validator
+     * @return {Object | Function} input descriptor or validator
+     */
+    static input() {
+      if (this.delegate.input) return this.delegate.input();
+      return null;
+    }
+
+    /**
+     * Output descriptor/validator
+     * @return {Object | Function} output descriptor or validator
+     */
+    static output() {
+      if (this.delegate.output) return this.delegate.output();
+      return null;
+    }
+
+    /**
+     * Examples
+     * @return {Array} array of examples
+     */
     static examples() {
       if (delegate.examples) {
         return delegate.examples();

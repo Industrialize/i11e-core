@@ -6,7 +6,7 @@ module.exports = i11e.createRobot({
 
   input() {
     return {
-      "name:!&": "John"  // name, must have, type must be string 
+      "name:!&": "John"  // name, must have, type must be string
     }
   },
 
@@ -32,7 +32,6 @@ module.exports = i11e.createRobot({
 
   examples() {
     return {
-
       "basic usage": {
         options: { // options
         },

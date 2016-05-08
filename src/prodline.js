@@ -41,9 +41,16 @@ _.addMethod('robot', function(robot, parallel) {
       }
     };
 
-    if (!parallel) parallel = 1;
-    return this.filter(robot.filter.bind(robot))
-      .through(_.pipeline(_.map(_.wrapCallback(fn)), _.parallel(parallel)));
+    if (!parallel) parallel = 3;
+
+    return this
+      .filter(robot.filter.bind(robot))
+      .through(
+        _.pipeline(
+          _.map(_.wrapCallback(fn)),
+          _.parallel(parallel)
+        )
+      );
   }
 });
 

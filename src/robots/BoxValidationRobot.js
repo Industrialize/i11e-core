@@ -37,6 +37,11 @@ module.exports = createRobotModel({
   },
 
   process(box, done) {
+    if (!this.template) {
+      // do nothing to validate the input
+      done(null, box);
+    }
+
     if (typeof this.template === 'function') {
       return this.handleFunction(box, done);
     }
@@ -81,6 +86,7 @@ module.exports = createRobotModel({
       var op = ops.charAt(i);
 
       if (op != '!' // not null
+        && op != '?' // optional
         && op != '=' // equal
         && op != '#' // deep equal, recuisively check the children
         && op != '&' // check type
@@ -93,7 +99,7 @@ module.exports = createRobotModel({
       ret.push({
         key: field,
         op: op
-      })
+      });
     }
 
     return ret;

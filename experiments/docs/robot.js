@@ -4,9 +4,9 @@ const Box = i11e.Box;
 const TopologyVisitor = require('../../lib/visitors/TopologyVisitor');
 
 // install debug extension first
-i11e.extend(require('../../../i11e-debug'));
-
-i11e.registerVisitor('robot', TopologyVisitor())
+// i11e.extend(require('../../../i11e-debug'));
+//
+// i11e.registerVisitor('robot', TopologyVisitor())
 
 // create a new robot model
 const GreetingRobotModel = i11e.createRobot({
@@ -43,7 +43,7 @@ const GreetingRobotModel = i11e.createRobot({
 });
 
 // create a new greeting robot
-var greetingRobot = GreetingRobotModel({
+var greetingRobot = new GreetingRobotModel({
   locale: 'fr'  // init the robot
 });
 
