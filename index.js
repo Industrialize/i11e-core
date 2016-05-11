@@ -82,12 +82,7 @@ exports.createRobot = require('./lib/Robot');
 
 
 // create a new Pipeline Model
-exports.createPipeline =  (delegate) => {
-  return (options) => {
-    var Pipeline = require('./lib/Pipeline')(delegate);
-    return new Pipeline(options);
-  }
-};
+exports.createPipeline = require('./lib/Pipeline');
 
 // create a new Factory Type
 exports.createFactory = (delegate) => {

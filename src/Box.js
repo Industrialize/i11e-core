@@ -102,6 +102,9 @@ class Box {
    * @return {Box} box itself
    */
   set(path, value) {
+    var scope = this.getTag(Constants.tags.SCOPE);
+    if (scope) path = scope + "." + path;
+
     objectPath.set(this, this.pathMap(path), value);
     return this;
   }
@@ -115,6 +118,10 @@ class Box {
     if (!path) {
       throw createError(500, 'Could not access path [null | undefined] in Box');
     }
+
+    var scope = this.getTag(Constants.tags.SCOPE);
+    if (scope) path = scope + "." + path;
+
     return objectPath.get(this, this.pathMap(path));
   }
 
@@ -124,6 +131,9 @@ class Box {
    * @return {Boolean}      true if data path exists otherwise false
    */
   has(path) {
+    var scope = this.getTag(Constants.tags.SCOPE);
+    if (scope) path = scope + "." + path;
+
     let v = objectPath.get(this, this.pathMap(path));
     return !!v && v != false;
   }
@@ -134,6 +144,9 @@ class Box {
    * @return {Box}      Box itself
    */
   del(path) {
+    var scope = this.getTag(Constants.tags.SCOPE);
+    if (scope) path = scope + "." + path;
+
     if (objectPath.has(this, this.pathMap(path))) {
       objectPath.del(this, this.pathMap(path));
     }
@@ -188,6 +201,10 @@ class Box {
       this._tags[name] = tag;
     }
     return this;
+  }
+
+  setTag(name, tag) {
+    return this.addTag(name, tag);
   }
 
   /**
@@ -306,10 +323,19 @@ class Box {
    */
   setGlossaryTag(tag) {
     if (!tag) {
-      return this.removeTag(Constants.tag.GLOSSARY);
+      return this.removeTag(Constants.tags.GLOSSARY);
     } else {
       return this.addTag(Constants.tags.GLOSSARY, tag);
     }
+  }
+
+  getScopeTag() {
+    return this.getTag(Constants.tags.SCOPE);
+  }
+
+  setScopeTag(scope) {
+    this.setTag(Constants.tags.SCOPE, scope);
+    return this;
   }
 
   print(showHidden, showTag) {

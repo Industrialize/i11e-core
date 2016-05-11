@@ -39,7 +39,7 @@ module.exports = (delegate) => {
      */
     constructor(options = {}) {
       this.id = Sequence.newName(); // robot id
-      this.model = "Unknown Model"; // robot model
+      this.model = "Unnamed Model"; // robot model
       this.options = options; // robot options
       this.sync = false;  // robot working mode: sync or async, default async
 

@@ -45,7 +45,7 @@ const createPipeline = (delegate) => {
   class Pipeline {
     constructor(options = {}) {
       this.id = Sequence.newName();
-      this.model = "Unknown Production Line";
+      this.model = "Unnamed Production Line";
       this.options = options;
       this.source = new SourceWrapper(this, new Source());
       this.tail = null;
@@ -147,7 +147,7 @@ const createPipeline = (delegate) => {
               }
 
               if (outgoing.options.tags) {
-                stream = stream.tag(outgoing.options.tags)
+                stream = stream.tag(outgoing.options.tags);
               }
 
               stream.doto((box) => {

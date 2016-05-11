@@ -85,9 +85,9 @@ var TriplePipeline = createPipeline({
 // ----------------------------------------------------------------------------
 // joint pipeline usage with prodline
 // ----------------------------------------------------------------------------
-var incPL = IncPipeline();
-var doublePL = DoublePipeline();
-var triplePL = TriplePipeline();
+var incPL = new IncPipeline();
+var doublePL = new DoublePipeline();
+var triplePL = new TriplePipeline();
 
 // join the two pipelines, incPL's tail to doublePL's head
 i11e.join(incPL, doublePL, {
