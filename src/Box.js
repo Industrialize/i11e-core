@@ -29,34 +29,45 @@ class Box {
     this._results = null; // the results of a request
 
     if (Box.isBox(content)) {
-      // content is already a box, copy all
-      for (let key in content) {
-        if (typeof content[key] === 'object' && key != '_payload') {
-          if (!this.hasOwnProperty(key)) this[key] = {};
-          extend(true, this[key], content[key]);
-        } else {
-          this[key] = content[key];
-        }
-      }
-    } else if (content instanceof Error) {
-      this._error = content;
-    } else if (typeof content == 'object' && !Buffer.isBuffer(content) && !isStream(content)) {
-      // copy the _payload content to the box
-      for (let key in content) {
-        if (content.hasOwnProperty(key)) {
-          if (typeof content[key] === 'object') {
-            if (!this.hasOwnProperty(key)) this[key] = {};
-            extend(true, this[key], content[key]);
-          } else {
-            this[key] = content[key];
-          }
-
-        }
-      }
+      extend(true, this, content);
+    } else if (typeof content === 'object') {
+      extend(true, this._payload, content);
     } else {
       // create a box with primitive type, stream, and buffer payload
-      this._payload = content;
+      this._payload = {
+        _v: content
+      };
     }
+
+    // if (Box.isBox(content)) {
+    //   // content is already a box, copy all
+    //   for (let key in content) {
+    //     if (typeof content[key] === 'object' && key !== '_payload') {
+    //       if (!this.hasOwnProperty(key)) this[key] = {};
+    //       extend(true, this[key], content[key]);
+    //     } else {
+    //       this[key] = content[key];
+    //     }
+    //   }
+    // } else if (content instanceof Error) {
+    //   this._error = content;
+    // } else if (typeof content == 'object' && !Buffer.isBuffer(content) && !isStream(content)) {
+    //   // copy the _payload content to the box
+    //   for (let key in content) {
+    //     if (content.hasOwnProperty(key)) {
+    //       if (typeof content[key] === 'object') {
+    //         if (!this.hasOwnProperty(key)) this[key] = {};
+    //         extend(true, this[key], content[key]);
+    //       } else {
+    //         this[key] = content[key];
+    //       }
+    //
+    //     }
+    //   }
+    // } else {
+    //   // create a box with primitive type, stream, and buffer payload
+    //   this._payload = content;
+    // }
   }
 
   // ---------------------------------------------------------------------------
@@ -105,7 +116,8 @@ class Box {
     var scope = this.getTag(Constants.tags.SCOPE);
     if (scope) path = scope + "." + path;
 
-    objectPath.set(this, this.pathMap(path), value);
+    objectPath.set(this._payload, this.pathMap(path), value);
+    
     return this;
   }
 
@@ -122,7 +134,7 @@ class Box {
     var scope = this.getTag(Constants.tags.SCOPE);
     if (scope) path = scope + "." + path;
 
-    return objectPath.get(this, this.pathMap(path));
+    return objectPath.get(this._payload, this.pathMap(path));
   }
 
   /**
@@ -134,7 +146,8 @@ class Box {
     var scope = this.getTag(Constants.tags.SCOPE);
     if (scope) path = scope + "." + path;
 
-    let v = objectPath.get(this, this.pathMap(path));
+    let v = objectPath.get(this._payload, this.pathMap(path));
+
     return !!v && v != false;
   }
 
@@ -147,13 +160,14 @@ class Box {
     var scope = this.getTag(Constants.tags.SCOPE);
     if (scope) path = scope + "." + path;
 
-    if (objectPath.has(this, this.pathMap(path))) {
-      objectPath.del(this, this.pathMap(path));
+    if (objectPath.has(this._payload, this.pathMap(path))) {
+      objectPath.del(this._payload, this.pathMap(path));
     }
     return this;
   }
 
   pathMap(path) {
+    // translate the path with glossary
     var keys = path;
     if (!Array.isArray(path)) {
       keys = path.split('.');
@@ -170,11 +184,11 @@ class Box {
       }
     }
 
-"#if process.env.NODE_ENV !== 'production'";
+    "#if process.env.NODE_ENV !== 'production'";
     if ((G.debug && G.glossary) || this.getTag(Constants.tags.DEBUG_GLOSSARY)) {
       console.log('  | Path [', keys.join('.'), '] maps to [', newPath.join('.'), ']');
     }
-"#endif";
+    "#endif";
 
     return newPath.join('.');
   }
@@ -247,7 +261,7 @@ class Box {
    * @return {Array}     The diffs
    */
   diff(box) {
-    return diff(this, box);
+    return diff(this._payload, box);
   }
 
   /**
@@ -256,7 +270,7 @@ class Box {
    * @return {Box}     the current box after merge
    */
   merge(box) {
-    var ds = diff(this, box);
+    var ds = diff(this._payload, box);
     if (ds) {
       for (var i = 0; i < ds.length; i++) {
         if (ds[i].kind === 'D') {
@@ -268,7 +282,7 @@ class Box {
           // update
         }
 
-        applyChange(this, box, ds[i]);
+        applyChange(this._payload, box, ds[i]);
       }
     }
     return this;
@@ -342,22 +356,22 @@ class Box {
     var newBox = new Box(this);
     let filter = this.getTag(Constants.tags.DEBUG_UNBOX_FILER);
     if (filter) filter = filter.split(';');
-    for (var key in newBox) {
+    for (var key in newBox._payload) {
       if (!showHidden) {
         if (key.indexOf('_') == 0) {
-          delete newBox[key];
+          delete newBox._payload[key];
         }
       }
 
       if (filter) {
         if (filter.indexOf(key) < 0) {
-          delete newBox[key];
+          delete newBox._payload[key];
         }
       }
     }
     console.log('--- Content ---');
     if (filter) console.log('(filter:', filter)
-    console.log(JSON.stringify(newBox, null, 2));
+    console.log(JSON.stringify(newBox._payload, null, 2));
 
     if (showTag) {
       console.log('--- Tags ---');

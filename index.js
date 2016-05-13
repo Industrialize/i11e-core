@@ -23,6 +23,7 @@ exports.Port = require('./lib/Port');
 // Source class
 exports.Source = require('./lib/Source');
 
+// Sequence tools to generate sequence/id/name
 exports.Seq = require('./lib/Sequence');
 
 // -----------------------------------------------------------------------------
@@ -115,6 +116,29 @@ exports.createExtension = (delegate) => {
 
 exports.version = () => {
   return require('./package.json').version;
+};
+
+// -----------------------------------------------------------------------------
+// shortcuts
+// -----------------------------------------------------------------------------
+
+/**
+ * create a new pipeline instance
+ * @param  {String} comment   [optional] the comment
+ * @param  {Function} processor function to build the pipeline
+ * @return {Pipeline}           new pipeline instance
+ */
+exports.pipeline = (comment, processor) => {
+  if (typeof comment === 'function') {
+    processor = comment;
+    comment = '';
+  }
+  const GeneralPurposePipeline = require('./lib/pipelines/GeneralPurposePipeline');
+  var pipeline = new GeneralPurposePipeline({
+    comment,
+    processor
+  });
+  return pipeline;
 };
 
 module.exports = exports;

@@ -25,6 +25,7 @@ const createPipeline = (delegate) => {
     }
 
     push(box) {
+      if (!Box.isBox(box)) box = new Box(box);
 "#if process.env.NODE_ENV !== 'production'";
       var visitorCtx = {};
       box.addTag(`VisitorCtx_${this.pipeline.id}`, visitorCtx);
@@ -94,6 +95,7 @@ const createPipeline = (delegate) => {
      * @return {Pipeline}     the pipeline instance
      */
     push(box) {
+      if (!Box.isBox(box)) box = new Box(box);
       this.source.push(box);
       return this;
     }

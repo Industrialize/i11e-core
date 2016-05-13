@@ -44,6 +44,17 @@ var TriplePipeline = createPipeline({
   }
 });
 
+var divide2PL = i11e.pipeline((source) =>
+  source._()
+    .gp((box, done) => {
+      var v = box.get('v');
+
+      box.set('v', v / 2);
+
+      done(null, box);
+    })
+);
+
 
 // ----------------------------------------------------------------------------
 // Single pipeline usage
@@ -119,3 +130,11 @@ incPL.$().push(new Box({
   v: 1,
   u: 10
 }));
+
+divide2PL._().each((box) => {
+  box.print();
+});
+
+divide2PL.$().push({
+  v: 10
+});
